@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.phoenix.blog.core.mapper.MessageMapper">
+    <select id="getMessageList" parameterType="string"
+            resultType="com.phoenix.blog.model.vo.ArticleMessageVO">
+        SELECT ma.message_id,ma.message_is_pulled,ma.message_type,ma.message_generate_time,
+               u.username,a.article_title
+        FROM message_article ma
+                INNER JOIN user u ON ma.message_producer_id = u.user_id
+                INNER JOIN article a on ma.message_related_article_id = a.article_id
+        WHERE ma.message_receiver_id = #{receiverId}
+        ORDER BY ma.message_generate_time DESC
+        LIMIT 20
+    </select>
+
+    <update id="savePulledMessage" parameterType="string">
+        UPDATE message_article
+        SET message_is_pulled = 1
+        WHERE message_receiver_id = #{receiverId} AND message_type = #{messageType}
+    </update>
+</mapper>
