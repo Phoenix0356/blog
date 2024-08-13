@@ -4,7 +4,7 @@
 <mapper namespace="com.phoenix.blog.core.mapper.ArticleMapper">
     <select id="selectArticlePreviewList" parameterType="string"
             resultType="com.phoenix.blog.model.vo.ArticleVO">
-        SELECT a.article_title , u.username , u.user_avatar_url
+        SELECT a.article_id, a.article_title , u.username , u.user_avatar_url
         FROM article a
             INNER JOIN user u ON a.article_user_id = u.user_id
     </select>

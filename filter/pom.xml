@@ -3,12 +3,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.2</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<groupId>com.phoenix</groupId>
+		<artifactId>blog</artifactId>
+		<version>1.0-SNAPSHOT</version>
 	</parent>
-	<groupId>com.phoenix</groupId>
+
 	<artifactId>filter</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>filter</name>
@@ -30,19 +29,15 @@
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
+		<!-- nacos -->
+		<dependency>
+			<groupId>com.alibaba.cloud</groupId>
+			<artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+			<version>2023.0.1.0</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
 		</dependency>
 		<!--mybatis_plus-->
 		<dependency>
@@ -51,11 +46,13 @@
 			<version>3.5.5</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>com.baomidou</groupId>
 			<artifactId>mybatis-plus-boot-starter</artifactId>
 			<version>3.5.5</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.mybatis</groupId>
 			<artifactId>mybatis-spring</artifactId>
@@ -65,8 +62,24 @@
 		<dependency>
 			<groupId>com.mysql</groupId>
 			<artifactId>mysql-connector-j</artifactId>
+			<version>8.2.0</version>
 			<scope>runtime</scope>
 		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-web</artifactId>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-test</artifactId>-->
+<!--			<scope>test</scope>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.projectlombok</groupId>-->
+<!--			<artifactId>lombok</artifactId>-->
+<!--			<optional>true</optional>-->
+<!--		</dependency>-->
+
 
 
 	</dependencies>
@@ -81,6 +94,14 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
 				<version>3.3</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+<!--				<configuration>-->
+<!--					<source>16</source>-->
+<!--					<target>16</target>-->
+<!--				</configuration>-->
 			</plugin>
 		</plugins>
 	</build>

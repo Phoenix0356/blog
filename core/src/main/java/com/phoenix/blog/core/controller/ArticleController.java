@@ -11,6 +11,7 @@ import com.phoenix.blog.model.vo.ArticleVO;
 import com.phoenix.blog.model.vo.ResultVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -18,6 +19,11 @@ import java.util.List;
 @RequestMapping("/article")
 @RequiredArgsConstructor
 public class ArticleController {
+
+//    @Value("${service-url.nacos-provider-service}")
+//    private String serverURL;
+
+    final RestTemplate restTemplate;
     final ArticleService articleService;
     final UserService userService;
     @GetMapping("/get/{articleId}")
@@ -45,6 +51,12 @@ public class ArticleController {
     @AuthorizationRequired(Role.WRITER)
     public ResultVO saveArticle(@RequestBody ArticleDTO articleDTO){
         articleDTO.setArticleUserId(TokenContext.getUserId());
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//        headers.setAcceptCharset(Collections.singletonList(StandardCharsets.UTF_8));
+//        HttpEntity<String> requestEntity = new HttpEntity<>(articleDTO.getArticleContent(), headers);
+//        String response = restTemplate.postForObject(serverURL + "/filter/text", requestEntity, String.class);
+//        articleDTO.setArticleContent(response);
         ArticleVO articleVO = articleService.saveArticleByUser(articleDTO);
         return ResultVO.success(RespMessageConstant.SAVE_SUCCESS,articleVO);
     }

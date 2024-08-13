@@ -1,6 +1,5 @@
 package com.phoenix.filter.init;
 
-import com.phoenix.filter.filter.TextFilter;
 import com.phoenix.filter.filter.matcher.WordMatcher;
 import com.phoenix.filter.manager.WordManager;
 import lombok.RequiredArgsConstructor;

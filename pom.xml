@@ -5,34 +5,123 @@
   <groupId>com.phoenix</groupId>
   <artifactId>blog</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.3.2</version>
+    <relativePath/>
+  </parent>
 
   <name>blog</name>
-  <url>http://maven.apache.org</url>
+  <url>https://maven.apache.org</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <java.version>17</java.version>
   </properties>
 
   <dependencies>
+<!--    <dependency>-->
+<!--      <groupId>org.springframework.boot</groupId>-->
+<!--      <artifactId>spring-boot-starter</artifactId>-->
+<!--      <version>3.3.2</version>-->
+<!--    </dependency>-->
+      <!-- SpringCloud 微服务 -->
+      <dependency>
+          <groupId>org.springframework.cloud</groupId>
+          <artifactId>spring-cloud-dependencies</artifactId>
+          <version>2023.0.3</version>
+          <type>pom</type>
+          <scope>import</scope>
+      </dependency>
+
+      <!-- SpringCloud Alibaba 微服务 -->
+      <dependency>
+          <groupId>com.alibaba.cloud</groupId>
+          <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+          <version>2023.0.1.0</version>
+          <type>pom</type>
+          <scope>import</scope>
+      </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!--jwt-->
+    <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt</artifactId>
+      <version>0.12.3</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.0.1</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.github.xiaoymin</groupId>
+      <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+      <version>4.4.0</version>
+    </dependency>
+
+    <!-- Spring Data Redis -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-redis</artifactId>
+      <version>3.3.2</version>
+    </dependency>
+
+
+    <!--redis pool-->
+    <dependency>
+      <groupId>io.lettuce</groupId>
+      <artifactId>lettuce-core</artifactId>
+      <version>6.2.7.RELEASE</version>
+    </dependency>
+
+    <!-- spring AOP-->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-aop</artifactId>
+      <version>3.3.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.30</version>
+      <scope>provided</scope>
+    </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
-    <!--slf4j-->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.7.25</version>
-    </dependency>
-    <!--logback-->
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <version>1.2.3</version>
-    </dependency>
+<!--    slf4j-->
+<!--    <dependency>-->
+<!--      <groupId>org.slf4j</groupId>-->
+<!--      <artifactId>slf4j-api</artifactId>-->
+<!--      <version>2.0.13</version>-->
+<!--    </dependency>-->
+<!--    &lt;!&ndash;logback&ndash;&gt;-->
+<!--    <dependency>-->
+<!--      <groupId>ch.qos.logback</groupId>-->
+<!--      <artifactId>logback-classic</artifactId>-->
+<!--      <version>1.4.12</version>-->
+<!--    </dependency>-->
+
+
+
   </dependencies>
   <build>
     <plugins>
@@ -40,6 +129,14 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
         <version>3.3</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+              <source>17</source>
+              <target>17</target>
+          </configuration>
       </plugin>
     </plugins>
   </build>

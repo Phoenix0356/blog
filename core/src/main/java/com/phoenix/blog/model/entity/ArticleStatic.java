@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class ArticleStatic {
 
-    @TableId(value = "articled_static_id", type = IdType.ASSIGN_UUID)
+    @TableId(value = "article_static_id", type = IdType.ASSIGN_UUID)
     private String articleStaticId;
 
     @TableField("article_read_count")
