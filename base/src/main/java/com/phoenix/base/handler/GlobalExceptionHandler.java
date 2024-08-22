@@ -1,8 +1,9 @@
 package com.phoenix.base.handler;
 
-import com.phoenix.base.model.vo.ResultVO;
+
 import com.phoenix.common.constant.CommonConstant;
 import com.phoenix.common.exceptions.clientException.BaseException;
+import com.phoenix.common.vo.ResultVO;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
