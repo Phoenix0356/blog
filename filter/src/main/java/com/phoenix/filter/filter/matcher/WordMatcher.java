@@ -1,15 +1,11 @@
 package com.phoenix.filter.filter.matcher;
 
-import com.phoenix.filter.enumeration.MatchResult;
-import lombok.Getter;
+import com.phoenix.filter.filter.enumeration.MatchResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 
 @Component
 @RequiredArgsConstructor

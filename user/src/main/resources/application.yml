@@ -1,0 +1,55 @@
+server:
+  # ?????
+  port: 8094
+
+spring:
+  application:
+    name: user
+  cloud:
+    nacos:
+      # nacos????
+      discovery:
+        # ??ip:port
+        server-addr: 127.0.0.1:8848
+  # MySQL
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    #    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://localhost:3306/user?useUnicode=true&useSSL=true&characterEncoding=utf8
+    username: root
+    password: 030319
+
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      connect-timeout: 5s
+      timeout: 5s
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+URL:
+  base: 112.124.42.234:8094
+  dns: phoenix0356.xyz
+
+jwt:
+  secret: DAFDAFAFDAFAgjluvvbgsfgdvebrhsrujrbcatyveynwyexmydmt
+  #60*60*8
+  expiration: 28800
+
+
+#mybatis-plus:
+#  mapper-locations: classpath:mapper/*.xml
+#  type-aliases-package: com.phoenix.user.model.vo
+#  configuration:
+#    map-underscore-to-camel-case: true
+
+excludePaths: /login,/register,/avatar/**
+
+picture:
+  defaultAvatarPath: \\static\\avatar/
+  defaultAvatarURL: \\avatar\\

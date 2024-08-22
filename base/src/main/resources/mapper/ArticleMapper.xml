@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.phoenix.base.core.mapper.ArticleMapper">
+    <select id="selectArticlePreviewList" parameterType="string"
+            resultType="com.phoenix.base.model.vo.ArticleVO">
+        SELECT a.article_id, a.article_title, ad.*
+        FROM article a
+            INNER JOIN article_data ad ON a.article_id = ad.article_id
+    </select>
+    
+    <select id="selectUserArticleList" parameterType="string"
+            resultType="com.phoenix.base.model.vo.ArticleVO">
+        SELECT a.* , u.username , u.user_avatar_url
+        FROM article a
+            INNER JOIN user u ON a.article_user_id = u.user_id
+        where a.article_user_id = #{userId}
+    </select>
+</mapper>
+

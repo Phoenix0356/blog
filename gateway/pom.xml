@@ -45,14 +45,17 @@
             <artifactId>spring-cloud-starter-gateway</artifactId>
             <version>4.1.5</version>
         </dependency>
-        <!--nacos 服务发现-->
         <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-            <version>2023.0.1.0</version>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
         </dependency>
-
-<!--        <dependency>-->
+        <!--公共模块-->
+        <dependency>
+            <groupId>com.phoenix</groupId>
+            <artifactId>common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <!--        <dependency>-->
 <!--            <groupId>org.springframework.cloud</groupId>-->
 <!--            <artifactId>spring-cloud-starter-loadbalancer</artifactId>-->
 <!--            <version>2023.0.3</version>-->

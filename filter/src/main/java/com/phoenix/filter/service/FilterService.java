@@ -1,16 +1,19 @@
 package com.phoenix.filter.service;
 
-import com.phoenix.filter.filter.TextFilter;
+import com.phoenix.filter.filter.Filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class FilterService {
-    final TextFilter textFilter;
+    final Filter filter;
 
-    public String filterSensitiveWord(String text){
+    public String filterText(String text){
+        return filter.filterText(text);
+    }
 
-        return textFilter.filterText(text);
+    public Object filterObject(Object object){
+        return filter.filterObjectText(object);
     }
 }
