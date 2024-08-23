@@ -1,6 +1,7 @@
 package com.phoenix.filter.filter.matcher;
 
 import com.phoenix.filter.filter.enumeration.MatchResult;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
@@ -13,37 +14,48 @@ public class WordMatcher implements InitializingBean {
 
     private final ACAutomaton automaton;
     private ACAutomaton.Node preMatchingNode;
-    private int matchingCount;
+
+    @Getter
+    private boolean wordChangedFlag;
 
     @Override
     public void afterPropertiesSet(){
         initState();
     }
-    public void init(List<String> wordsList){
-        wordsList.forEach(automaton::addNode);
+
+    public int getWordCount(){
+        return automaton.getTreeSize();
+    }
+    public void addWord(List<String> wordsList){
+        wordsList.forEach(s->{
+            if(s.length()<=1) return;
+            automaton.addNode(s);
+        });
         automaton.linkRematchNodes();
     }
 
     public void initState(){
-        matchingCount = 0;
         preMatchingNode = automaton.getRoot();
+        wordChangedFlag = false;
     }
 
-//    public void resetWordChangedFlag(){
-//        matchingCount--;
-//        isWordChanged = false;
-//    }
+    public void resetWordChangeFlag(){
+        wordChangedFlag = false;
+    }
+
+    public int getCurWordLength(){
+        return preMatchingNode.depth;
+    }
 
     public int match(Character character){
         ACAutomaton.Node curNode = preMatchingNode.getChild(character);
         //如果从上一个节点能匹配到
         if (curNode!=null){
             //加入当前字符，并更新pre节点
-           matchingCount++;
            preMatchingNode = curNode;
-            //如果匹配到结尾返回匹配到的数量
+            //如果匹配到结尾返回当前节点的深度即为词语长度
             if (curNode.isLast) {
-                return matchingCount;
+                return curNode.depth;
             }
             //不是结尾,返回当前状态
             return MatchResult.PROCESSING.getIdentifier();
@@ -56,6 +68,7 @@ public class WordMatcher implements InitializingBean {
 
         //跳到失配节点，设置换词标记为true
         preMatchingNode = preMatchingNode.reMatchNode;
+        wordChangedFlag = true;
         //再次尝试匹配
         return match(character);
     }

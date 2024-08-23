@@ -17,8 +17,8 @@ import lombok.experimental.Accessors;
 @TableName("word")
 @Accessors(chain = true)
 public class SensitiveWord {
-    @TableId(value = "word_id", type = IdType.ASSIGN_ID)
-    private String wordId;
+    @TableId(value = "word_id", type = IdType.AUTO)
+    private int wordId;
 
     @TableField("word_string")
     private String wordString;

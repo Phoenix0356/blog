@@ -35,13 +35,11 @@ public class FilterAspect {
                 Class<?> clazz = o.getClass();
                 if (clazz.isAnnotationPresent(FilterEntity.class)){
                     Field[] fields = clazz.getDeclaredFields();
-//                    o = filterServiceClient.filterObject(new ClientRequest(o,o.getClass()));
-//                    System.out.println("我是返回值"+o.toString());
                     for (Field field:fields){
                         field.setAccessible(true);
                         if (field.getType().equals(String.class)&&field.isAnnotationPresent(FilterField.class)){
                             try {
-                                field.set(o,filterServiceClient.filterText((String) field.get(o)).getObject());
+                                field.set(o,filterServiceClient.filterText((String) field.get(o)));
                             } catch (IllegalAccessException e) {
                                 throw new RuntimeException(e);
                             }

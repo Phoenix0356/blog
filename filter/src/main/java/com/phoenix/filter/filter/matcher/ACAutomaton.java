@@ -15,6 +15,20 @@ public class ACAutomaton {
         root = new Node();
         root.val = '根';
     }
+
+    public int getTreeSize(){
+        int len = 0;
+        Queue<Node> nodeQueue = new ArrayDeque<>();
+        nodeQueue.offer(root);
+        while (!nodeQueue.isEmpty()){
+            Node cur = nodeQueue.poll();
+            len++;
+            for (Node child:cur.childrenNodes.values()){
+                nodeQueue.offer(child);
+            }
+        }
+        return len;
+    }
     public void addNode(String word){
         char[] chars = word.toCharArray();
         int len = chars.length;
@@ -74,8 +88,6 @@ public class ACAutomaton {
             return curNode.getChild(newVal);
         }
         Node child = new Node(curNode,newVal,isLast);
-        //设置父节点
-        child.parentNode = curNode;
         //子节点加入树
         curNode.addChild(newVal,child);
         return child;
@@ -85,21 +97,29 @@ public class ACAutomaton {
     public static class Node {
         Node parentNode;
         Character val;
+
+        int depth;
         boolean isLast;
 
         //单个字符对应一节点
         Node reMatchNode;
         HashMap<Character,Node> childrenNodes;
+
+        //初始化根节点
         public Node() {
             this.parentNode = null;
             this.val = null;
+            this.depth = 0;
             this.isLast = false;
             this.reMatchNode = null;
             this.childrenNodes = new HashMap<>();
         }
+
+        //节点入树时初始化使用，从父节点处初始化深度
         public Node(Node parentNode,Character val,boolean isLast) {
             this.parentNode = parentNode;
             this.val = val;
+            this.depth = parentNode.depth +1;
             this.isLast = isLast;
             this.reMatchNode = null;
             this.childrenNodes = new HashMap<>();

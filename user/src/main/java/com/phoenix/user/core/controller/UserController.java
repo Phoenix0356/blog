@@ -55,7 +55,6 @@ public class UserController {
     @PostMapping("/login")
     @AuthorizationRequired(Role.VISITOR)
     public ResultVO login(@RequestBody UserLoginDTO userLoginDTO){
-        System.out.println("我被调用了");
         UserVO userVO = userService.login(userLoginDTO);
         return ResultVO.success(RespMessageConstant.LOGIN_SUCCESS,userVO);
     }

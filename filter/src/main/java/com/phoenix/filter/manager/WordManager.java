@@ -19,5 +19,9 @@ public class WordManager {
                 .toList();
     }
 
+    public void importList(List<SensitiveWord> list){
+        list.forEach(wordMapper::insertIgnore);
+    }
+
 
 }

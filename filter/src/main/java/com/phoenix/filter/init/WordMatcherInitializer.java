@@ -8,9 +8,6 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 @Component
 @RequiredArgsConstructor
@@ -21,7 +18,7 @@ public class WordMatcherInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        wordMatcher.init(wordManager.loadAllWord());
+        wordMatcher.addWord(wordManager.loadAllWord());
         log.info("敏感词匹配器初始化完成");
     }
 

@@ -32,8 +32,6 @@ import java.util.concurrent.locks.ReentrantLock;
 @RequiredArgsConstructor
 public class ArticleServiceImpl implements ArticleService{
 
-    final UserServiceClient userServiceClient;
-
     final ArticleMapper articleMapper;
     final MessageService messageService;
     final ArticleTagManager articleTagManager;
@@ -48,17 +46,12 @@ public class ArticleServiceImpl implements ArticleService{
 
         Article article;
         ArticleData articleData;
-        ResultVO userResultVo;
 
         ReentrantLock reentrantLock = articleStaticsLockPool.getIfAbsent(articleId, ReentrantLock.class);
         reentrantLock.lock();
         try{
             //获取缓存
             article = articleManager.selectArticleInCache(articleId);
-
-            userResultVo = userServiceClient.getUserById(article.getArticleUserId());
-            Object user = userResultVo.getObject();
-            userResultVo.getClazz().cast(user);
             //更新阅读量
             articleData = articleStaticManager.selectByArticleId(articleId);
             articleData.setArticleReadCount(articleData.getArticleReadCount()+1);

@@ -45,7 +45,7 @@ public class FilterAspect {
                         //参数中的字段是否需要被过滤
                         if (field.getType().equals(String.class)&&field.isAnnotationPresent(FilterField.class)){
                             try {
-                                field.set(o, filterServiceClient.filterText((String) field.get(o)).getObject());
+                                field.set(o, filterServiceClient.filterText((String) field.get(o)));
                             } catch (IllegalAccessException e) {
                                 throw new RuntimeException(e);
                             }

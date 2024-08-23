@@ -48,7 +48,7 @@ public class ArticleController {
     @AuthorizationRequired(Role.WRITER)
     @FilterNeeded
     public ResultVO saveArticle(@RequestBody ArticleDTO articleDTO){
-        System.out.println(articleDTO.toString());
+        System.out.println(articleDTO.getArticleTitle());
         articleDTO.setArticleUserId(TokenContext.getUserId());
         ArticleVO articleVO = articleService.saveArticleByUser(articleDTO);
         return ResultVO.success(RespMessageConstant.SAVE_SUCCESS,articleVO);

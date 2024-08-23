@@ -9,9 +9,10 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class FilterController {
     final FilterService filterService;
-    @PostMapping("/filter/text")
-    public ResultVO filterText(@RequestBody String inputText){
-        return ResultVO.success(filterService.filterText(inputText));
+    @PostMapping("/text")
+    public String filterText(@RequestBody String inputText){
+//        System.out.println(inputText+" "+filterService.filterText(inputText));
+        return filterService.filterText(inputText);
     }
 
 //    @PostMapping("/content")
