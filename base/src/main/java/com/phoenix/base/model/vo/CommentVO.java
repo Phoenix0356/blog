@@ -12,16 +12,14 @@ public class CommentVO {
     String commentContent;
     int commentUpvoteCount;
     String commentReviseTime;
-
-    String username;
-    String userAvatarURL;
-
+    String commentUserId;
     public static CommentVO buildVO(Comment comment){
         return CommentVO.builder()
                 .commentId(comment.getCommentId())
                 .commentContent(comment.getCommentContent())
                 .commentUpvoteCount(comment.getCommentUpvoteCount())
                 .commentReviseTime(comment.getCommentReviseTime().toString())
+                .commentUserId(comment.getCommentUserId())
                 .build();
     }
 }

@@ -23,17 +23,17 @@ import java.util.List;
 public class CollectionController {
     private final CollectionService collectionService;
 
-    @GetMapping("/get/{collectionId}")
+    @GetMapping("/{collectionId}")
     @AuthorizationRequired(Role.MEMBER)
     public ResultVO getCollection(@PathVariable String collectionId){
         CollectionVO collectionVO = collectionService.getCollection(collectionId);
         return ResultVO.success(RespMessageConstant.GET_SUCCESS,collectionVO);
     }
 
-    @GetMapping("/all/{username}")
+    @GetMapping("/all")
     @AuthorizationRequired(Role.MEMBER)
-    public ResultVO getAllCollection(@PathVariable String username){
-        List<CollectionVO> collectionVOList = collectionService.getAllCollections(username);
+    public ResultVO getAllCollection(){
+        List<CollectionVO> collectionVOList = collectionService.getAllCollections();
         return ResultVO.success(RespMessageConstant.GET_SUCCESS,collectionVOList);
     }
 

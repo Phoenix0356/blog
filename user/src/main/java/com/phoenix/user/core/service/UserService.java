@@ -8,17 +8,17 @@ import com.phoenix.common.dto.UserRegisterDTO;
 import java.util.Date;
 
 public interface UserService {
-    public UserVO register(UserRegisterDTO userRegisterDTO);
+    UserVO register(UserRegisterDTO userRegisterDTO);
 
-    public UserVO login(UserLoginDTO userLoginDTO);
+    UserVO login(UserLoginDTO userLoginDTO);
 
-    public UserVO getUserById(String userId);
+    UserVO getCurUser(String userId);
 
-    public UserVO getUserByUsername(String username);
+    UserVO getUserByUserId(String userId);
 
-    public UserVO updateUser(UserDTO userDTO,String userId);
+    UserVO updateUser(UserDTO userDTO,String userId);
 
-    public void logout(String jwtId, String userId, Date jwtExpirationTime);
+    void logout(String jwtId, String userId, Date jwtExpirationTime);
 
 
 

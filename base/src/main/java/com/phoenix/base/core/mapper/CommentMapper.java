@@ -9,7 +9,5 @@ import java.util.List;
 
 @Mapper
 public interface CommentMapper extends BaseMapper<Comment> {
-
-    CommentVO selectCommentWithPublisher(String commentId);
-    List<CommentVO> selectCommentWithPublisherList(String articleId);
+    List<Comment> selectCommentWithPublisherList(String articleId);
 }

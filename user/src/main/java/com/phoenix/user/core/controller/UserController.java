@@ -3,6 +3,7 @@ package com.phoenix.user.core.controller;
 import com.phoenix.user.context.TokenContext;
 import com.phoenix.user.core.service.UserService;
 import com.phoenix.common.vo.ResultVO;
+import com.phoenix.user.model.entity.User;
 import com.phoenix.user.model.vo.UserVO;
 import com.phoenix.common.annotation.AuthorizationRequired;
 import com.phoenix.common.annotation.FilterNeeded;
@@ -20,12 +21,10 @@ public class UserController {
 
     final UserService userService;
 
-    @GetMapping("/get")
-    @AuthorizationRequired(Role.MEMBER)
-    public ResultVO getUserById(@RequestParam String userId){
-        UserVO userVO;
-        userVO = userService.getUserById(userId);
-
+    @GetMapping("/visitor/{userId}")
+    @AuthorizationRequired(Role.VISITOR)
+    public ResultVO getUserById(@PathVariable("userId") String userId){
+        UserVO userVO = userService.getUserByUserId(userId);
         return ResultVO.success(RespMessageConstant.GET_SUCCESS,userVO);
     }
 
@@ -33,7 +32,7 @@ public class UserController {
     @AuthorizationRequired(Role.MEMBER)
     public ResultVO getCurrentUser(){
         UserVO userVO;
-        userVO = userService.getUserById(TokenContext.getUserId());
+        userVO = userService.getCurUser(TokenContext.getUserId());
 
         return ResultVO.success(RespMessageConstant.GET_SUCCESS,userVO);
     }

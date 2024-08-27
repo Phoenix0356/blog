@@ -15,13 +15,13 @@ public class ReplyController {
 
     final private ReplyService replyService;
 
-    @GetMapping("/get")
+    @GetMapping("/visitor")
     @AuthorizationRequired(Role.VISITOR)
     public ResultVO getReply(@RequestParam String replyId){
         return null;
     }
 
-    @GetMapping("/get/{commentId}")
+    @GetMapping("/visitor/{commentId}")
     @AuthorizationRequired(Role.VISITOR)
     public ResultVO getCommentReplyList(@PathVariable String commentId){
         return null;

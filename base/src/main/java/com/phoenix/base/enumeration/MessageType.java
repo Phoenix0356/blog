@@ -1,4 +1,4 @@
-package com.phoenix.common.enumeration;
+package com.phoenix.base.enumeration;
 
 import lombok.Getter;
 

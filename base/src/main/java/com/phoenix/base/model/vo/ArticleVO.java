@@ -11,21 +11,22 @@ public class ArticleVO {
     String articleId;
     String articleTitle;
     String articleContent;
+    String articleUserId;
     String articleReviseTime;
     int articleUpvoteCount;
     int articleReadCount;
     int articleBookmarkCount;
-
 //    String username;
 //    String userAvatarURL;
 //
-//    String collectionArticleNote;
+    String collectionArticleNote;
 public static ArticleVO buildVO(Article article, ArticleData articleStatic){
     return new ArticleVO()
             .setArticleId(article.getArticleId())
             .setArticleTitle(article.getArticleTitle())
             .setArticleContent(article.getArticleContent())
             .setArticleReviseTime(article.getArticleReviseTime().toString())
+            .setArticleUserId(article.getArticleUserId())
             .setArticleReadCount(articleStatic.getArticleReadCount())
             .setArticleUpvoteCount(articleStatic.getArticleUpvoteCount())
             .setArticleBookmarkCount(articleStatic.getArticleBookmarkCount());

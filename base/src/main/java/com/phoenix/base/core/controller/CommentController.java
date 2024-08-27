@@ -21,14 +21,14 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    @GetMapping("/get/{commentId}")
+    @GetMapping("/visitor/{commentId}")
     @AuthorizationRequired(Role.VISITOR)
     public ResultVO getCommentById(@PathVariable String commentId){
         CommentVO commentVO = commentService.getCommentById(commentId);
         return ResultVO.success(RespMessageConstant.GET_SUCCESS, commentVO);
     }
 
-    @GetMapping("/get/all")
+    @GetMapping("/visitor/all")
     @AuthorizationRequired(Role.VISITOR)
     public ResultVO getArticleCommentAll(@RequestParam String articleId) throws InterruptedException {
         List<CommentVO> commentVOList = commentService.getCommentArticleList(articleId);

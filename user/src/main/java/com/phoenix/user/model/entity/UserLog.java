@@ -28,13 +28,16 @@ public class UserLog {
     @TableField(value = "username")
     String username;
 
-    @TableField(value = "user_login_time")
-    Timestamp userLoginTime;
+    @TableField(value = "user_operate_time")
+    Timestamp userOperateTime;
+
+    @TableField(value = "user_operation")
+    String userOperateType;
 
 //    @TableField(value = "user_logout_time")
 //    Timestamp userLogoutTime;
 
 //    @TableField(value = "user_status")
-//    UserStatus userStatus;
+//    UserOperation userStatus;
 
 }

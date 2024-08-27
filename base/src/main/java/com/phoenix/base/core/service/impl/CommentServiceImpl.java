@@ -1,5 +1,7 @@
 package com.phoenix.base.core.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.phoenix.base.core.manager.CommentManager;
 import com.phoenix.base.core.mapper.CommentMapper;
 import com.phoenix.base.core.service.CommentService;
 import com.phoenix.common.exceptions.clientException.CommentFormatException;
@@ -20,6 +22,7 @@ import java.util.List;
 public class CommentServiceImpl implements CommentService{
 
     private final CommentMapper commentMapper;
+    private final CommentManager commentManager;
 
     @Override
     public CommentVO getCommentById(String commentId) {
@@ -27,21 +30,21 @@ public class CommentServiceImpl implements CommentService{
             throw  new InvalidateArgumentException();
         }
 
-        CommentVO commentVO= commentMapper.selectCommentWithPublisher(commentId);
+        Comment comment= commentMapper.selectById(commentId);
 
-        if (commentVO == null){
+        if (comment == null){
             throw new CommentNotFoundException();
         }
 
-        return commentVO;
+        return CommentVO.buildVO(comment);
     }
 
     @Override
     public List<CommentVO> getCommentArticleList(String articleId){
-        if (DataUtil.isEmptyData(articleId)){
-            throw new InvalidateArgumentException();
-        }
-        return commentMapper.selectCommentWithPublisherList(articleId);
+        if (DataUtil.isEmptyData(articleId)) throw new InvalidateArgumentException();
+        return commentManager.selectListByArticleId(articleId)
+                .stream().map(CommentVO::buildVO)
+                .toList();
     }
 
     @Override

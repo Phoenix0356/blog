@@ -28,7 +28,7 @@ public class TagController {
         return ResultVO.success(RespMessageConstant.GET_SUCCESS,tagVOList);
     }
 
-    @GetMapping("/get/{articleId}")
+    @GetMapping("/visitor/{articleId}")
     @AuthorizationRequired(Role.VISITOR)
     public ResultVO getArticleTagsList(@PathVariable String articleId){
         List<TagVO> tagVOList = tagService.getArticleTagsList(articleId);

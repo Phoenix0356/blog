@@ -23,14 +23,14 @@ public class ArticleController {
     final ArticleService articleService;
     final FilterServiceClient filterServiceClient;
 
-    @GetMapping("/get/{articleId}")
+    @GetMapping("/visitor/{articleId}")
     @AuthorizationRequired(Role.VISITOR)
     public ResultVO getArticleById(@PathVariable String articleId){
         ArticleVO articleVO = articleService.getArticleDetailById(articleId);
         return ResultVO.success(RespMessageConstant.GET_SUCCESS, articleVO);
     }
 
-    @GetMapping("/get/all")
+    @GetMapping("/visitor/all")
     @AuthorizationRequired(Role.VISITOR)
     public ResultVO getArticleAll(@RequestParam("sortBy") int sortStrategy){
         List<ArticleVO> articleVOList= articleService.getArticleAll(sortStrategy);
@@ -48,7 +48,6 @@ public class ArticleController {
     @AuthorizationRequired(Role.WRITER)
     @FilterNeeded
     public ResultVO saveArticle(@RequestBody ArticleDTO articleDTO){
-        System.out.println(articleDTO.getArticleTitle());
         articleDTO.setArticleUserId(TokenContext.getUserId());
         ArticleVO articleVO = articleService.saveArticleByUser(articleDTO);
         return ResultVO.success(RespMessageConstant.SAVE_SUCCESS,articleVO);
@@ -64,11 +63,10 @@ public class ArticleController {
     }
 
     //更新点赞数和收藏数
-    @PutMapping("/update/statics")
+    @PutMapping("/update/data")
     @AuthorizationRequired(Role.MEMBER)
-    @FilterNeeded
-    public ResultVO updateArticleStatics(@RequestBody ArticleDTO articleDTO){
-        articleService.updateArticleStatics(articleDTO);
+    public ResultVO updateArticleData(@RequestBody ArticleDTO articleDTO){
+        articleService.updateArticleData(articleDTO);
         return ResultVO.success(RespMessageConstant.UPDATE_SUCCESS);
     }
 

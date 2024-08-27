@@ -11,7 +11,7 @@ public class CollectionVO {
     String collectionName;
     String collectionReviseTime;
     String collectionDescription;
-    public static CollectionVO generateCollectionVO(Collection collection){
+    public static CollectionVO buildVO(Collection collection){
         return CollectionVO.builder()
                 .collectionId(collection.getCollectionId())
                 .collectionName(collection.getCollectionName())

@@ -5,9 +5,8 @@
     <select id="getMessageList" parameterType="string"
             resultType="com.phoenix.base.model.vo.ArticleMessageVO">
         SELECT ma.message_id,ma.message_is_pulled,ma.message_type,ma.message_generate_time,
-               u.username,a.article_title
+               a.article_title
         FROM message_article ma
-                INNER JOIN user u ON ma.message_producer_id = u.user_id
                 INNER JOIN article a on ma.message_related_article_id = a.article_id
         WHERE ma.message_receiver_id = #{receiverId}
         ORDER BY ma.message_generate_time DESC

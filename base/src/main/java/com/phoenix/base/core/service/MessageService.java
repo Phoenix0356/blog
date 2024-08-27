@@ -1,6 +1,6 @@
 package com.phoenix.base.core.service;
 
-import com.phoenix.common.enumeration.MessageType;
+import com.phoenix.base.enumeration.MessageType;
 import com.phoenix.base.model.vo.ArticleMessageVO;
 
 import java.util.List;

@@ -20,6 +20,7 @@ public class WordMatcherInitializer implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         wordMatcher.addWord(wordManager.loadAllWord());
         log.info("敏感词匹配器初始化完成");
+        System.out.println(wordMatcher.getWordCount());
     }
 
 

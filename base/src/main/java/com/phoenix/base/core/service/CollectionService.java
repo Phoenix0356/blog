@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface CollectionService {
     CollectionVO getCollection(String collectionId);
-    List<CollectionVO> getAllCollections(String username);
+    List<CollectionVO> getAllCollections();
     List<ArticleVO> getAllArticleList(String collectionId);
 
     void saveArticleIntoCollection(CollectionAddDTO collectionAddDTO, String userId);

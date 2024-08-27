@@ -1,6 +1,7 @@
 package com.phoenix.base.core.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.phoenix.base.context.TokenContext;
 import com.phoenix.common.constant.CommonConstant;
 import com.phoenix.common.constant.RespMessageConstant;
 import com.phoenix.base.core.mapper.CollectionMapper;
@@ -37,12 +38,15 @@ public class CollectionServiceImpl implements CollectionService {
     @Override
     public CollectionVO getCollection(String collectionId) {
         Collection collection = collectionMapper.selectById(collectionId);
-        return CollectionVO.generateCollectionVO(collection);
+        return CollectionVO.buildVO(collection);
     }
 
     @Override
-    public List<CollectionVO> getAllCollections(String username) {
-        return collectionMapper.selectCollectionsByUsername(username);
+    public List<CollectionVO> getAllCollections() {
+        return collectionMapper
+                .selectList(new QueryWrapper<Collection>().eq("collection_user_id",TokenContext.getUserId()))
+                .stream().map(CollectionVO::buildVO)
+                .toList();
     }
 
     @Override

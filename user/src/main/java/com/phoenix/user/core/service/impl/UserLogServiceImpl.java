@@ -2,6 +2,7 @@ package com.phoenix.user.core.service.impl;
 
 import com.phoenix.user.core.mapper.UserLogMapper;
 import com.phoenix.user.core.service.UserLogService;
+import com.phoenix.user.enumeration.UserOperation;
 import com.phoenix.user.model.entity.User;
 import com.phoenix.user.model.entity.UserLog;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +23,13 @@ public class UserLogServiceImpl implements UserLogService {
 
     @Override
     @Async("asyncServiceExecutor")
-    public void saveUserLog(User user) {
+    public void saveUserLog(User user, String userOperation) {
         UserLog userLog = new UserLog();
         userLog.setUserId(user.getUserId())
                 .setUsername(user.getUsername())
-                .setUserLoginTime(new Timestamp(System.currentTimeMillis()));
+                .setUserOperateTime(new Timestamp(System.currentTimeMillis()))
+                .setUserOperateType(userOperation)
+        ;
         userLogMapper.insert(userLog);
     }
 }

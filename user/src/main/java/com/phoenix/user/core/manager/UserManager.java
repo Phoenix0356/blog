@@ -22,13 +22,17 @@ public class UserManager {
         return userMapper.selectList(new QueryWrapper<User>().in("user_id",userIdList));
     }
 
-    public User selectUserInCache(String userId){
+    public User selectByUserIdInCache(String userId){
         User user = (User) redisCacheHandler.getCache(userId,User.class);
         if (user == null){
             user = userMapper.selectById(userId);
             redisCacheHandler.setCache(userId,user);
         }
         return user;
+    }
+
+    public User selectByUsername(String username){
+       return userMapper.selectOne(new QueryWrapper<User>().eq("username",username));
     }
 
     public void setIntoCache(String id, String value, Long time){

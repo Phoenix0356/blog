@@ -1,5 +1,6 @@
 package com.phoenix.filter.handler;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,7 +12,8 @@ import java.util.List;
 
 @Component
 public class FileHandler {
-    public List<String> parseFile(MultipartFile file){
+
+    public List<String> parseFile(MultipartFile file) throws Exception {
         List<String> contentList = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()
                 , StandardCharsets.UTF_8))) {
@@ -21,7 +23,7 @@ public class FileHandler {
                 contentList.add(line);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new Exception();
         }
         return contentList;
     }

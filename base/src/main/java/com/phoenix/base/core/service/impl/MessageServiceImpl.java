@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.phoenix.base.core.mapper.ArticleMapper;
 import com.phoenix.base.core.mapper.MessageMapper;
 import com.phoenix.base.core.service.MessageService;
-import com.phoenix.common.enumeration.MessageType;
+import com.phoenix.base.enumeration.MessageType;
 import com.phoenix.base.model.entity.Article;
 import com.phoenix.base.model.entity.ArticleMessage;
 import com.phoenix.base.model.vo.ArticleMessageVO;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Objects;
 
 
 @Service
@@ -56,6 +57,7 @@ public class MessageServiceImpl implements MessageService{
     @Override
     @Async("asyncServiceExecutor")
     public void saveMessage(String messageRelatedArticleId, MessageType messageType, String producerId, String receiverId) {
+        if (Objects.equals(producerId, receiverId)) return;
         Article article = articleMapper.selectById(messageRelatedArticleId);
         ArticleMessage articleMessage = messageMapper.selectOne(new QueryWrapper<ArticleMessage>()
                         .eq("message_producer_id",producerId)
@@ -65,7 +67,6 @@ public class MessageServiceImpl implements MessageService{
                         .orderByDesc("message_generate_time")
                         .last("Limit 1")
         );
-
         if (articleMessage == null||articleMessage.isMessageIsPulled()) {
             articleMessage = new ArticleMessage();
             articleMessage.setMessageProducerId(producerId)

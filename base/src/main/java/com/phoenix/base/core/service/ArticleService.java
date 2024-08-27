@@ -13,7 +13,7 @@ public interface ArticleService {
     List<ArticleVO> getArticleUserList(String userId);
     ArticleVO saveArticleByUser(ArticleDTO articleDTO);
     void updateArticleContent(ArticleDTO articleDTO);
-    void updateArticleStatics(ArticleDTO articleDTO);
+    void updateArticleData(ArticleDTO articleDTO);
     void deleteArticleBookmarkCount(String articleId);
     void deleteArticleById(String articleId);
 }

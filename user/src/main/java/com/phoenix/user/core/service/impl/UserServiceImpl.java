@@ -8,6 +8,7 @@ import com.phoenix.user.core.manager.UserManager;
 import com.phoenix.user.core.mapper.UserMapper;
 import com.phoenix.user.core.service.UserLogService;
 import com.phoenix.user.core.service.UserService;
+import com.phoenix.user.enumeration.UserOperation;
 import com.phoenix.user.model.entity.User;
 import com.phoenix.user.model.vo.UserVO;
 import com.phoenix.user.util.DataUtil;
@@ -43,10 +44,10 @@ public class UserServiceImpl implements UserService {
     final JwtConfig jwtConfig;
 
     @Override
-    public UserVO getUserById(String userId) {
+    public UserVO getCurUser(String userId) {
         if (DataUtil.isEmptyData(userId)) throw new InvalidateArgumentException();
 
-        User user = userManager.selectUserInCache(userId);
+        User user = userManager.selectByUserIdInCache(userId);
         if (user == null) {
             throw new NotFoundException(RespMessageConstant.USER_NOT_FOUND_ERROR);
         }
@@ -54,11 +55,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserVO getUserByUsername(String username){
-        if (DataUtil.isEmptyData(username)) throw new InvalidateArgumentException();
+    public UserVO getUserByUserId(String userId){
+        if (DataUtil.isEmptyData(userId)) throw new InvalidateArgumentException();
 
-        User user = userMapper.selectOne(new QueryWrapper<User>().eq("username",username));
-
+        User user = userManager.selectByUserIdInCache(userId);
         if (user == null){
             throw new NotFoundException(RespMessageConstant.USER_NOT_FOUND_ERROR);
         }
@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserService {
         userManager.setIntoCache(user.getUserId(),"",jwtConfig.expiration);
 
         //记录日志
-        userLogService.saveUserLog(user);
+        userLogService.saveUserLog(user,UserOperation.REGISTER.name());
         return UserVO.BuildVO(user,token);
     }
 
@@ -140,7 +140,7 @@ public class UserServiceImpl implements UserService {
         userManager.setIntoCache(user.getUserId(),"",jwtConfig.expiration);
 
         //记录日志
-        userLogService.saveUserLog(user);
+        userLogService.saveUserLog(user,UserOperation.LOGIN.name());
 
         return UserVO.BuildVO(user,token);
     }

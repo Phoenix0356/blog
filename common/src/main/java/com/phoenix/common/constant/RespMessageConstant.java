@@ -27,6 +27,9 @@ public class RespMessageConstant {
     public final static String USERNAME_OR_PASSWORD_ERROR = "用户名或密码错误！";
     public final static String USER_NOT_FOUND_ERROR = "用户未找到！";
     public final static String USERNAME_ALREADY_EXISTS_ERROR = "用户名已存在！";
+    public final static String FILE_UPLOAD_ERROR = "文件上传失败！";
+
+
 
 
 
