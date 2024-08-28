@@ -51,11 +51,11 @@ public class RedisCacheHandler {
     }
 
     public void deleteCache(String key){
-        if (Boolean.TRUE.equals(redisTemplate.hasKey(key))) return;
+        if (Boolean.FALSE.equals(redisTemplate.hasKey(key))) return;
         redisTemplate.delete(key);
     }
     public void deleteStringCache(String key){
-        if (Boolean.TRUE.equals(stringRedisTemplate.hasKey(key))) return;
+        if (Boolean.FALSE.equals(stringRedisTemplate.hasKey(key))) return;
         stringRedisTemplate.delete(key);
     }
     //尝试获取锁

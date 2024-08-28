@@ -20,6 +20,7 @@ import com.phoenix.base.util.DataUtil;
 import com.phoenix.base.model.vo.ArticleVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.List;
@@ -29,7 +30,6 @@ import java.util.concurrent.locks.ReentrantLock;
 @Service
 @RequiredArgsConstructor
 public class ArticleServiceImpl implements ArticleService{
-
     final ArticleMapper articleMapper;
     final MessageService messageService;
     final ArticleTagManager articleTagManager;
@@ -117,7 +117,6 @@ public class ArticleServiceImpl implements ArticleService{
         ReentrantLock reentrantLock = articleStaticsLockPool.getIfAbsent(articleId, ReentrantLock.class);
         reentrantLock.lock();
         try {
-            articleManager.deleteArticleInCache(articleId);
             Article article = articleMapper.selectById(articleId);
             if (article == null) throw new NotFoundException(RespMessageConstant.ARTICLE_NOT_FOUND_ERROR);
 
@@ -125,6 +124,9 @@ public class ArticleServiceImpl implements ArticleService{
                     .setArticleContent(articleDTO.getArticleContent())
                     .setArticleReviseTime(new Timestamp(System.currentTimeMillis()));
             articleMapper.updateById(article);
+            articleManager.deleteArticleInCache(articleId);
+
+            System.out.println("我被执行了");
         }finally {
             reentrantLock.unlock();
         }

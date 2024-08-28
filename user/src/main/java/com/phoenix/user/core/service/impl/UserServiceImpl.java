@@ -81,6 +81,7 @@ public class UserServiceImpl implements UserService {
             throw new AlreadyExistsException(RespMessageConstant.USERNAME_ALREADY_EXISTS_ERROR);
         }
         userMapper.updateById(user);
+        userManager.deleteCache(userId);
 
         return UserVO.BuildVO(user,null);
     }

@@ -23,7 +23,6 @@ public class ArticleManager {
     }
 
     public void deleteArticleInCache(String articleId){
-        if (redisCacheHandler.getCache(articleId) == null) return;
         redisCacheHandler.deleteCache(articleId);
     }
 

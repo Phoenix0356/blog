@@ -38,8 +38,6 @@ public class FilterAspect {
                 //参数类是否需要被过滤
                 if (clazz.isAnnotationPresent(FilterEntity.class)){
                     Field[] fields = clazz.getDeclaredFields();
-//                    o = filterServiceClient.filterObject(new ClientRequest(o,o.getClass()));
-//                    System.out.println("我是返回值"+o.toString());
                     for (Field field:fields){
                         field.setAccessible(true);
                         //参数中的字段是否需要被过滤
