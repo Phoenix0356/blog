@@ -15,6 +15,11 @@ public class FilterController {
         return filterService.filterText(inputText);
     }
 
+    @PostMapping("/detect")
+    public Boolean detectText(@RequestBody String inputText){
+        return filterService.detectText(inputText);
+    }
+
 //    @PostMapping("/content")
 //    public Object filterSensitiveWord(@RequestBody ClientRequest clientRequest){
 //        Object object = clientRequest.getObject();

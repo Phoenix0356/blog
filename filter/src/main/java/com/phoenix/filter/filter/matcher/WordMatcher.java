@@ -4,12 +4,16 @@ import com.phoenix.filter.filter.enumeration.MatchResult;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Scope("prototype")
 public class WordMatcher implements InitializingBean {
 
     private final ACAutomaton automaton;
@@ -21,17 +25,6 @@ public class WordMatcher implements InitializingBean {
     @Override
     public void afterPropertiesSet(){
         initState();
-    }
-
-    public int getWordCount(){
-        return automaton.getTreeSize();
-    }
-    public void addWord(List<String> wordsList){
-        wordsList.forEach(s->{
-            if(s.length()<=1) return;
-            automaton.addNode(s);
-        });
-        automaton.linkRematchNodes();
     }
 
     public void initState(){

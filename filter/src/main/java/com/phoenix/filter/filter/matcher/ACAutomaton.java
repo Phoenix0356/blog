@@ -5,18 +5,36 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayDeque;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Getter
 @Component
 public class ACAutomaton {
     private final Node root;
+    private final ReentrantLock reentrantLock;
     public ACAutomaton(){
+        reentrantLock = new ReentrantLock();
         root = new Node();
         root.val = '根';
     }
 
-    public int getTreeSize(){
+    //保证线程安全
+    public void init(List<String> wordList){
+        reentrantLock.lock();
+        try {
+            wordList.forEach(s->{
+                if(s.length()<=1) return;
+                addNode(s);
+            });
+            linkRematchNodes();
+        }finally {
+            reentrantLock.unlock();
+        }
+    }
+
+    public int getSize(){
         int len = 0;
         Queue<Node> nodeQueue = new ArrayDeque<>();
         nodeQueue.offer(root);

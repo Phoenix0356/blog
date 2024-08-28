@@ -10,6 +10,9 @@ public interface FilterServiceClient {
     @PostMapping(value = "/text")
     String filterText(@RequestBody String inputText);
 
+    @PostMapping(value = "/detect")
+    Boolean detectText(@RequestBody String inputText);
+
 //    @PostMapping("/content")
 //    Object filterObject(@RequestBody ClientRequest clientRequest);
 

@@ -13,7 +13,11 @@ public class FilterService {
         return filter.filterText(text);
     }
 
-    public Object filterObject(Object object){
-        return filter.filterObjectText(object);
+    public Boolean detectText(String text){
+        return filter.detectText(text);
     }
+
+//    public Object filterObject(Object object){
+//        return filter.filterObjectText(object);
+//    }
 }
