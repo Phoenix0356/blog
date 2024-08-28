@@ -28,6 +28,7 @@ public class RespMessageConstant {
     public final static String USER_NOT_FOUND_ERROR = "用户未找到！";
     public final static String USERNAME_ALREADY_EXISTS_ERROR = "用户名已存在！";
     public final static String FILE_UPLOAD_ERROR = "文件上传失败！";
+    public final static String SENSITIVE_WORD_DETECTED = "内容存在敏感词，请重新输入！";
 
 
 

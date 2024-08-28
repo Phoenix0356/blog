@@ -1,12 +1,11 @@
 package com.phoenix.user.core.controller;
 
+import com.phoenix.common.client.FilterServiceClient;
 import com.phoenix.user.context.TokenContext;
 import com.phoenix.user.core.service.UserService;
 import com.phoenix.common.vo.ResultVO;
-import com.phoenix.user.model.entity.User;
 import com.phoenix.user.model.vo.UserVO;
 import com.phoenix.common.annotation.AuthorizationRequired;
-import com.phoenix.common.annotation.FilterNeeded;
 import com.phoenix.common.constant.RespMessageConstant;
 import com.phoenix.common.dto.UserDTO;
 import com.phoenix.common.dto.UserLoginDTO;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     final UserService userService;
+    final FilterServiceClient filterServiceClient;
 
     @GetMapping("/visitor/{userId}")
     @AuthorizationRequired(Role.VISITOR)
@@ -39,15 +39,21 @@ public class UserController {
 
     @PutMapping("/update")
     @AuthorizationRequired(Role.MEMBER)
-    @FilterNeeded
     public ResultVO updateUser(@RequestBody UserDTO userDTO){
+        //检测是否存在敏感词
+        if (filterServiceClient.detectText(userDTO.getUsername())){
+            return ResultVO.error(RespMessageConstant.SENSITIVE_WORD_DETECTED);
+        }
         UserVO userVO = userService.updateUser(userDTO,TokenContext.getUserId());
         return ResultVO.success(RespMessageConstant.UPDATE_SUCCESS,userVO);
     }
     @PostMapping("/register")
     @AuthorizationRequired(Role.VISITOR)
-    @FilterNeeded
     public ResultVO register(@RequestBody UserRegisterDTO userRegisterDTO){
+        //检测是否存在敏感词
+        if (filterServiceClient.detectText(userRegisterDTO.getUsername())){
+            return ResultVO.error(RespMessageConstant.SENSITIVE_WORD_DETECTED);
+        }
         UserVO userVO = userService.register(userRegisterDTO);
         return ResultVO.success(RespMessageConstant.REGISTER_SUCCESS,userVO);
     }
