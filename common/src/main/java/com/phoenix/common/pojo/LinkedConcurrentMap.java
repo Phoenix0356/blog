@@ -1,4 +1,4 @@
-package com.phoenix.user.model.pojo;
+package com.phoenix.common.pojo;
 
 import com.phoenix.common.exceptions.serverException.LockPoolException;
 

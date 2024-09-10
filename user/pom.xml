@@ -12,6 +12,8 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>user</name>
     <description>user</description>
+    <packaging>jar</packaging>
+
     <url/>
     <licenses>
         <license/>
@@ -58,12 +60,6 @@
             <optional>true</optional>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
         <!--mybatis_plus-->
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -90,7 +86,18 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <!-- 将依赖到的包都放进去 -->
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
+                    <!-- 指定该 Main Class 为全局的唯一入口 -->
+                    <mainClass>com.phoenix.user.UserApplication</mainClass>
+                    <layout>ZIP</layout>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>

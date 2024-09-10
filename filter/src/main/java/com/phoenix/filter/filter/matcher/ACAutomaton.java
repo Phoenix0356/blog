@@ -28,7 +28,7 @@ public class ACAutomaton {
                 if(s.length()<=1) return;
                 addNode(s);
             });
-            linkRematchNodes();
+            linkAllRematchNodes();
         }finally {
             reentrantLock.unlock();
         }
@@ -58,7 +58,7 @@ public class ACAutomaton {
         }
     }
 
-    public void linkRematchNodes(){
+    public void linkAllRematchNodes(){
         //bfs算法匹配失配节点
         //初始化第一层节点rematchNode,并加入队列
         Queue<Node> queue = new ArrayDeque<>();
@@ -66,17 +66,16 @@ public class ACAutomaton {
             node.reMatchNode = root;
             queue.offer(node);
         }
-
         while (!queue.isEmpty()){
             Node curNode = queue.poll();
-            findRematchNode(curNode);
+            linkRematchNode(curNode);
             for (Node childNode:curNode.childrenNodes.values()){
                 queue.offer(childNode);
             }
         }
     }
 
-    private void findRematchNode(Node node){
+    private void linkRematchNode(Node node){
         //第一层节点直接返回
         if (node.parentNode == root) return;
 

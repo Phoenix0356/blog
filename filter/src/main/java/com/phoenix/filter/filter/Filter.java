@@ -7,9 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -23,22 +20,10 @@ public class Filter {
     protected WordMatcher generateWordMatcher(){
         return null;
     }
-//    public Object filterObjectText(Object object){
-//        List<Field> fieldList = filterHelper.extractStringFields(object);
-//        fieldList.forEach(field -> {
-//            try {
-//                filterHelper.setStringFields(object,field,filterText((String) field.get(object)));
-//            } catch (IllegalAccessException e) {
-//                throw new RuntimeException(e);
-//            }
-//        });
-//        return object;
-//    }
 
     //Todo:对于一个节点，其可能是某个敏感词末尾，但并不说明其没有子节点，而目前逻辑会直接忽略这些子节点
     public String filterText(String text){
         WordMatcher wordMatcher = generateWordMatcher();
-
         StringBuilder stringBuilder = new StringBuilder();
         int startMatchingInd = 0,endMatchingInd = 0;
         char[] textChars = text.toCharArray();
@@ -104,4 +89,17 @@ public class Filter {
         wordMatcher.initState();
         return false;
     }
+
+    //    public Object filterObjectText(Object object){
+//        List<Field> fieldList = filterHelper.extractStringFields(object);
+//        fieldList.forEach(field -> {
+//            try {
+//                filterHelper.setStringFields(object,field,filterText((String) field.get(object)));
+//            } catch (IllegalAccessException e) {
+//                throw new RuntimeException(e);
+//            }
+//        });
+//        return object;
+//    }
+
 }

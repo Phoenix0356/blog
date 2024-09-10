@@ -17,8 +17,5 @@ public class ArticleDTO {
 
     String articlePublishTime;
 
-    int articleReadCount;
-    int articleUpvoteCountChange;
-    int articleBookmarkCountChange;
     int articleMessageType;
 }

@@ -1,4 +1,4 @@
-package com.phoenix.user.util;
+package com.phoenix.common.util;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 

@@ -26,6 +26,7 @@ public class UserManager {
         User user = (User) redisCacheHandler.getCache(userId,User.class);
         if (user == null){
             user = userMapper.selectById(userId);
+            user.setPassword(null);
             redisCacheHandler.setCache(userId,user);
         }
         return user;

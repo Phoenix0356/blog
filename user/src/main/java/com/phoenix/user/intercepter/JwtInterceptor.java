@@ -2,8 +2,8 @@ package com.phoenix.user.intercepter;
 
 import com.phoenix.user.config.JwtConfig;
 import com.phoenix.user.context.TokenContext;
-import com.phoenix.user.util.DataUtil;
-import com.phoenix.user.util.JwtUtil;
+import com.phoenix.common.util.DataUtil;
+import com.phoenix.common.util.JwtUtil;
 import com.phoenix.common.constant.CommonConstant;
 import com.phoenix.common.exceptions.clientException.JwtValidatingException;
 import io.jsonwebtoken.Claims;

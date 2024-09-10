@@ -1,6 +1,5 @@
 package com.phoenix.base.core.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.phoenix.base.core.manager.CommentManager;
 import com.phoenix.base.core.mapper.CommentMapper;
 import com.phoenix.base.core.service.CommentService;
@@ -10,7 +9,7 @@ import com.phoenix.common.exceptions.clientException.InvalidateArgumentException
 import com.phoenix.common.dto.CommentDTO;
 import com.phoenix.base.model.entity.Comment;
 import com.phoenix.base.model.vo.CommentVO;
-import com.phoenix.base.util.DataUtil;
+import com.phoenix.common.util.DataUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

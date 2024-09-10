@@ -1,6 +1,5 @@
 package com.phoenix.filter.controller;
 
-import com.phoenix.common.vo.ResultVO;
 import com.phoenix.filter.service.FilterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

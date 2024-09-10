@@ -16,6 +16,7 @@ public class ArticleVO {
     int articleUpvoteCount;
     int articleReadCount;
     int articleBookmarkCount;
+    int articleDataState;
 //    String username;
 //    String userAvatarURL;
 //

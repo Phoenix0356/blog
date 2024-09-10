@@ -8,7 +8,7 @@ import com.phoenix.base.enumeration.MessageType;
 import com.phoenix.base.model.entity.Article;
 import com.phoenix.base.model.entity.ArticleMessage;
 import com.phoenix.base.model.vo.ArticleMessageVO;
-import com.phoenix.base.util.DataUtil;
+import com.phoenix.common.util.DataUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -41,12 +41,12 @@ public class MessageServiceImpl implements MessageService{
     @Override
     public void confirmMessage(String receiverId, int messageTypeNum) {
 
-        if (DataUtil.isOptionChosen(messageTypeNum,MessageType.UPVOTE.getTypeNum())){
+        if (DataUtil.isOptionChosen(messageTypeNum,MessageType.UPVOTE.getIdentifier())){
             messageMapper.savePulledMessage(receiverId,MessageType.UPVOTE.name());
         }
 
-        if (DataUtil.isOptionChosen(messageTypeNum,MessageType.BOOKMARK.getTypeNum())||
-                DataUtil.isOptionChosen(messageTypeNum,MessageType.BOOKMARK_CANCEL.getTypeNum())
+        if (DataUtil.isOptionChosen(messageTypeNum,MessageType.BOOKMARK.getIdentifier())||
+                DataUtil.isOptionChosen(messageTypeNum,MessageType.BOOKMARK_CANCEL.getIdentifier())
         ){
             messageMapper.savePulledMessage(receiverId,MessageType.BOOKMARK.name());
             messageMapper.savePulledMessage(receiverId,MessageType.BOOKMARK_CANCEL.name());

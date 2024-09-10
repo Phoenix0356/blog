@@ -4,12 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.phoenix.base.core.mapper.ArticleTagMapper;
 import com.phoenix.base.model.entity.ArticleTagRelation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class ArticleTagManager {
 
     private final ArticleTagMapper articleTagMapper;
@@ -35,14 +37,14 @@ public class ArticleTagManager {
     public void insert(ArticleTagRelation articleTagRelation){
         int result = articleTagMapper.insert(articleTagRelation);
         if (result == 0){
-            //todo 记录日志
+            log.error("ID为 {} 的文章-标签关系插入数据库失败",articleTagRelation.getArticleTagListId());
         }
     }
 
     public void delete(ArticleTagRelation articleTagRelation){
         int result = articleTagMapper.deleteById(articleTagRelation);
         if (result == 0){
-            //todo 记录日志
+            log.error("ID为 {} 的文章-标签关系从数据库删除失败",articleTagRelation.getArticleTagListId());
         }
     }
 
@@ -50,7 +52,7 @@ public class ArticleTagManager {
         if (idList.isEmpty()) return;
         int result = articleTagMapper.deleteBatchIds(idList);
         if (result == 0){
-            //todo 记录日志
+            log.error("文章-标签关系列表从数据库删除失败");
         }
     }
     public void deleteBatch(List<ArticleTagRelation>  articleTagRelationList){
@@ -60,7 +62,7 @@ public class ArticleTagManager {
         if (idList.isEmpty()) return;
         int result = articleTagMapper.deleteBatchIds(idList);
         if (result == 0){
-            //todo 记录日志
+            log.error("文章-标签关系列表从数据库删除失败");
         }
     }
 }

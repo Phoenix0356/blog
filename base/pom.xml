@@ -13,6 +13,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>base</name>
     <description>base</description>
+    <packaging>jar</packaging>
 
 <!--    <properties>-->
 <!--        <java.version>17</java.version>-->
@@ -122,6 +123,19 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <!-- 指定该 Main Class 为全局的唯一入口 -->
+                    <mainClass>com.phoenix.base.BaseApplication</mainClass>
+                    <layout>ZIP</layout>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <!-- 将依赖到的包都放进去 -->
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

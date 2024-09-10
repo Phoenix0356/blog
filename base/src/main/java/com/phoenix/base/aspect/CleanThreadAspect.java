@@ -7,12 +7,14 @@ import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 
 @Aspect
 @Component
+@Order(value = 1)
 public class CleanThreadAspect {
     @Pointcut(value = "execution(* com.phoenix.base.core.controller.*Controller.*(..))")
     public void point() {

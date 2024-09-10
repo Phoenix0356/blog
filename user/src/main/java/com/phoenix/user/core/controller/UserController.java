@@ -47,7 +47,7 @@ public class UserController {
         UserVO userVO = userService.updateUser(userDTO,TokenContext.getUserId());
         return ResultVO.success(RespMessageConstant.UPDATE_SUCCESS,userVO);
     }
-    @PostMapping("/register")
+    @PostMapping("/visitor/register")
     @AuthorizationRequired(Role.VISITOR)
     public ResultVO register(@RequestBody UserRegisterDTO userRegisterDTO){
         //检测是否存在敏感词
@@ -57,7 +57,7 @@ public class UserController {
         UserVO userVO = userService.register(userRegisterDTO);
         return ResultVO.success(RespMessageConstant.REGISTER_SUCCESS,userVO);
     }
-    @PostMapping("/login")
+    @PostMapping("/visitor/login")
     @AuthorizationRequired(Role.VISITOR)
     public ResultVO login(@RequestBody UserLoginDTO userLoginDTO){
         UserVO userVO = userService.login(userLoginDTO);

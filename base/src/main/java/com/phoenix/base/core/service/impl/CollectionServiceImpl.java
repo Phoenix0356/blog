@@ -11,7 +11,7 @@ import com.phoenix.common.dto.ArticleNoteDTO;
 import com.phoenix.common.dto.CollectionAddDTO;
 import com.phoenix.common.dto.CollectionDTO;
 import com.phoenix.base.model.entity.Collection;
-import com.phoenix.base.util.DataUtil;
+import com.phoenix.common.util.DataUtil;
 import com.phoenix.common.exceptions.clientException.AlreadyContainsException;
 import com.phoenix.common.exceptions.clientException.CollectionExistException;
 import com.phoenix.common.exceptions.clientException.NotFoundException;

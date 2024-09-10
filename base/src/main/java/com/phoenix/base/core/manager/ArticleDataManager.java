@@ -16,14 +16,12 @@ public class ArticleDataManager {
                 .eq("article_id",articleId));
     }
 
-    public void update(ArticleData articleStatic){
-        articleDataMapper.updateById(articleStatic);
-    }
-    public void insert(ArticleData articleStatic){
-        articleDataMapper.insert(articleStatic);
+    public void update(ArticleData articleData){articleDataMapper.updateById(articleData);}
+    public void insert(ArticleData articleData){
+        articleDataMapper.insert(articleData);
     }
 
-    public void deleteByArticleId(ArticleData articleStatic){
-        articleDataMapper.deleteById(articleStatic);
+    public void deleteByArticleId(String articleId){
+        articleDataMapper.deleteById(articleId);
     }
 }

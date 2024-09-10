@@ -1,4 +1,4 @@
-package com.phoenix.base.util;
+package com.phoenix.common.util;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,7 +25,7 @@ public class PictureUtil {
             // if user uploads an image
             else {
                 //create save path and decode the Base64
-                alterFileName = UUID.randomUUID().toString()+ ".jpg";
+                alterFileName = UUID.randomUUID() + ".jpg";
                 String newPath = resourcesPath + alterFileName ;
                 byte[] pictureBytes = Base64.getDecoder().decode(pictureBase64);
                 //save the new image

@@ -1,7 +1,8 @@
-package com.phoenix.user.util;
+package com.phoenix.common.util;
 
 import com.phoenix.common.constant.JwtConstant;
 import io.jsonwebtoken.Claims;
+
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;

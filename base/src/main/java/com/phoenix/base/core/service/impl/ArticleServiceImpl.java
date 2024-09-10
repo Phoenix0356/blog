@@ -16,7 +16,7 @@ import com.phoenix.common.exceptions.clientException.ArticleFormatException;
 import com.phoenix.common.exceptions.clientException.InvalidateArgumentException;
 import com.phoenix.base.model.entity.ArticleData;
 import com.phoenix.base.model.pojo.LinkedConcurrentMap;
-import com.phoenix.base.util.DataUtil;
+import com.phoenix.common.util.DataUtil;
 import com.phoenix.base.model.vo.ArticleVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,14 +30,15 @@ import java.util.concurrent.locks.ReentrantLock;
 @Service
 @RequiredArgsConstructor
 public class ArticleServiceImpl implements ArticleService{
-    final ArticleMapper articleMapper;
-    final MessageService messageService;
-    final ArticleTagManager articleTagManager;
-    final ArticleDataManager articleDataManager;
-    final CommentManager commentManager;
-    final ArticleManager articleManager;
+    private final ArticleMapper articleMapper;
+    private final MessageService messageService;
+    private final ArticleTagManager articleTagManager;
+    private final ArticleUpVoteManager articleUpVoteManager;
+    private final ArticleDataManager articleDataManager;
+    private final ArticleManager articleManager;
     static final LinkedConcurrentMap<String,ReentrantLock> articleStaticsLockPool = new LinkedConcurrentMap<>();
 
+    //TODO：这个方法应该异步修改文章阅读量，加快返回速度
     @Override
     public ArticleVO getArticleDetailById(String articleId) {
         if (DataUtil.isEmptyData(articleId)) throw new InvalidateArgumentException();
@@ -57,7 +58,20 @@ public class ArticleServiceImpl implements ArticleService{
         }finally {
             reentrantLock.unlock();
         }
-        return ArticleVO.buildVO(article,articleData);
+
+        //TODO:可以抽象出一个类，感觉过于繁琐
+        ArticleVO articleVO = ArticleVO.buildVO(article,articleData);
+        if (TokenContext.getUserId()!=null){
+            if (articleUpVoteManager.isArticleUpvoteByUser(articleId,TokenContext.getUserId())){
+                articleVO.setArticleDataState(MessageType.UPVOTE.getIdentifier());
+            }else {
+                articleVO.setArticleDataState(MessageType.UPVOTE_CANCEL.getIdentifier());
+            }
+        }else {
+            articleVO.setArticleDataState(0);
+        }
+
+        return articleVO;
     }
 
     @Override
@@ -138,35 +152,41 @@ public class ArticleServiceImpl implements ArticleService{
         reentrantLock.lock();
         try {
             String articleId = articleDTO.getArticleId();
+            String operatorUserId = TokenContext.getUserId();
 
             if (DataUtil.isEmptyData(articleId)) throw new InvalidateArgumentException();
 
             Article article = articleManager.selectArticleInCache(articleId);
             ArticleData articleData = articleDataManager.selectByArticleId(articleId);
 
-            int newUpvoteCount = articleData.getArticleUpvoteCount()+articleDTO.getArticleUpvoteCountChange();
-            int newBookmarkCount = articleData.getArticleBookmarkCount()+articleDTO.getArticleBookmarkCountChange();
+            String articleUserId = article.getArticleUserId();
+            int articleBookMarkCount = articleData.getArticleBookmarkCount();
             int messageType = articleDTO.getArticleMessageType();
-
-            //判断是否被点赞
-            if (DataUtil.isOptionChosen(messageType, MessageType.UPVOTE.getTypeNum())){
-                articleData.setArticleUpvoteCount(newUpvoteCount);
+            //TODO:重复代码有点多
+            //如果被点赞，就更新缓存，并将事件存入消息表
+            if (DataUtil.isOptionChosen(messageType, MessageType.UPVOTE.getIdentifier())){
+                articleUpVoteManager.setUserIntoSet(articleId,operatorUserId);
                 messageService.saveMessage(articleId,MessageType.UPVOTE,
-                        TokenContext.getUserId(),article.getArticleUserId());
+                        operatorUserId,articleUserId);
             }
-
-            //判断是否被收藏
-            if (DataUtil.isOptionChosen(messageType, MessageType.BOOKMARK.getTypeNum())){
-                articleData.setArticleBookmarkCount(newBookmarkCount);
+            //如果被取消点赞，就更新缓存，并将事件存入消息表
+            if (DataUtil.isOptionChosen(messageType, MessageType.UPVOTE_CANCEL.getIdentifier())){
+                articleUpVoteManager.deleteUserFromSet(articleId,operatorUserId);
+                messageService.saveMessage(articleId,MessageType.UPVOTE_CANCEL,
+                        operatorUserId,articleUserId);
+            }
+            //如果被收藏，将事件存入消息表
+            if (DataUtil.isOptionChosen(messageType, MessageType.BOOKMARK.getIdentifier())){
+                articleData.setArticleBookmarkCount(articleBookMarkCount+1);
                 messageService.saveMessage(articleId,MessageType.BOOKMARK,
-                        TokenContext.getUserId(),article.getArticleUserId());
+                        operatorUserId,articleUserId);
             }
 
-            //判断是否被取消收藏
-            if (DataUtil.isOptionChosen(messageType, MessageType.BOOKMARK_CANCEL.getTypeNum())){
-                articleData.setArticleBookmarkCount(newBookmarkCount);
+            //如果被取消收藏，将事件存入消息表
+            if (DataUtil.isOptionChosen(messageType, MessageType.BOOKMARK_CANCEL.getIdentifier())){
+                articleData.setArticleBookmarkCount(articleBookMarkCount-1);
                 messageService.saveMessage(articleId,MessageType.BOOKMARK_CANCEL,
-                        TokenContext.getUserId(),article.getArticleUserId());
+                        operatorUserId,articleUserId);
             }
 
             articleDataManager.update(articleData);
@@ -197,6 +217,7 @@ public class ArticleServiceImpl implements ArticleService{
         Article article = articleMapper.selectById(articleId);
         if (article == null) throw new NotFoundException(RespMessageConstant.ARTICLE_NOT_FOUND_ERROR);
 
+        articleDataManager.deleteByArticleId(articleId);
         articleTagManager.deleteBatch(articleTagManager.selectListByArticleId(articleId));
         articleMapper.delete(new QueryWrapper<Article>().eq("article_id",articleId));
     }
