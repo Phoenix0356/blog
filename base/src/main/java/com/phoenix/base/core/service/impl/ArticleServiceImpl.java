@@ -165,13 +165,13 @@ public class ArticleServiceImpl implements ArticleService{
             //TODO:重复代码有点多
             //如果被点赞，就更新缓存，并将事件存入消息表
             if (DataUtil.isOptionChosen(messageType, MessageType.UPVOTE.getIdentifier())){
-                articleUpVoteManager.setUserIntoSet(articleId,operatorUserId);
+                articleUpVoteManager.setUserIntoCache(articleId,operatorUserId);
                 messageService.saveMessage(articleId,MessageType.UPVOTE,
                         operatorUserId,articleUserId);
             }
             //如果被取消点赞，就更新缓存，并将事件存入消息表
             if (DataUtil.isOptionChosen(messageType, MessageType.UPVOTE_CANCEL.getIdentifier())){
-                articleUpVoteManager.deleteUserFromSet(articleId,operatorUserId);
+                articleUpVoteManager.deleteUserFromCache(articleId,operatorUserId);
                 messageService.saveMessage(articleId,MessageType.UPVOTE_CANCEL,
                         operatorUserId,articleUserId);
             }

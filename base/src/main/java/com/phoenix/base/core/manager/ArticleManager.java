@@ -2,6 +2,7 @@ package com.phoenix.base.core.manager;
 
 import com.phoenix.base.cache.StringCacheHandler;
 import com.phoenix.base.core.mapper.ArticleMapper;
+import com.phoenix.base.enumeration.CachePrefix;
 import com.phoenix.base.model.entity.Article;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -12,18 +13,23 @@ public class ArticleManager {
     private final ArticleMapper articleMapper;
     final StringCacheHandler stringCacheHandler;
 
-    //从redis缓存中拿数据，如果没有就去数据库中取，再更新到缓存中
+    private String assembleCacheKey(String id){
+        return CachePrefix.ARTICLE +":"+id;
+    }
+
     public Article selectArticleInCache(String articleId){
-        Article article = (Article) stringCacheHandler.getCache(articleId,Article.class);
+        String key = assembleCacheKey(articleId);
+        Article article = (Article) stringCacheHandler.getCache(key,Article.class);
         if (article == null){
             article = articleMapper.selectById(articleId);
-            stringCacheHandler.set(articleId, article);
+            stringCacheHandler.set(key, article);
         }
         return article;
     }
 
     public void deleteArticleInCache(String articleId){
-        stringCacheHandler.deleteCache(articleId);
+        String key = assembleCacheKey(articleId);
+        stringCacheHandler.deleteCache(key);
     }
 
 }

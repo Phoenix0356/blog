@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 @Component
 @RequiredArgsConstructor
@@ -15,5 +16,9 @@ public abstract class RedisCacheHandler {
 
     public Boolean exist(String key){
          return redisTemplate.hasKey(key);
+    }
+
+    public Set<String> scanKeys(String prefix){
+        return redisTemplate.keys(prefix.concat("*"));
     }
 }

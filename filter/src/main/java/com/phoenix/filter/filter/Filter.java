@@ -15,7 +15,7 @@ public class Filter {
     final FilterHelper filterHelper;
     private static final char REPLACE_CHARACTER = '*';
 
-    //注入多例bean
+    //产生多例bean
     @Lookup
     protected WordMatcher generateWordMatcher(){
         return null;

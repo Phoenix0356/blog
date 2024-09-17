@@ -15,11 +15,12 @@ public class SetCacheHandler extends RedisCacheHandler{
     }
 
     public void set(String key, Object object){
-        redisTemplate.opsForSet().add(key,object,DEFAULT_EXPIRE_TIME,DEFAULT_TIME_UNIT);
+        redisTemplate.opsForSet().add(key, object);
+        redisTemplate.expire(key, DEFAULT_EXPIRE_TIME, DEFAULT_TIME_UNIT);
     }
 
-    public Long setList(String key, List<Object> values) {
-        return redisTemplate.opsForSet().add(key, values.toArray());
+    public void setList(String key, List<Object> values) {
+        redisTemplate.opsForSet().add(key, values.toArray());
     }
     public Set<Object> getSet(String key) {
         return redisTemplate.opsForSet().members(key);
@@ -32,7 +33,7 @@ public class SetCacheHandler extends RedisCacheHandler{
         return redisTemplate.opsForSet().size(key);
     }
 
-    public Long deleteFromSet(String key, Object value) {
-        return redisTemplate.opsForSet().remove(key, value);
+    public void deleteFromSet(String key, Object value) {
+        redisTemplate.opsForSet().remove(key, value);
     }
 }

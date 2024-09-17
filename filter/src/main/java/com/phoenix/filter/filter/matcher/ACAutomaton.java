@@ -17,11 +17,11 @@ public class ACAutomaton {
     public ACAutomaton(){
         reentrantLock = new ReentrantLock();
         root = new Node();
-        root.val = '根';
+        root.val = null;
     }
 
-    //保证线程安全
     public void init(List<String> wordList){
+        //保证线程安全
         reentrantLock.lock();
         try {
             wordList.forEach(s->{
