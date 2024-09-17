@@ -45,7 +45,7 @@ public class ArticleUpVoteManager{
             setCacheHandler.setList(key,upvoteUserList);
         }
     }
-    public Set<String> getCache(String articleId){
+    public Set<String> loadAndGetCache(String articleId){
         String key = assembleCacheKey(articleId);
         loadCache(key);
         return setCacheHandler.getSet(key)
@@ -53,7 +53,10 @@ public class ArticleUpVoteManager{
                 .map(userId -> (String)userId)
                 .collect(Collectors.toSet());
     }
-
+    public int getCacheSize(String articleId){
+        String key = assembleCacheKey(articleId);
+        return Math.toIntExact(setCacheHandler.size(key));
+    }
     public Boolean isArticleUpvoteByUser(String articleId,String userId){
         String key = assembleCacheKey(articleId);
         return setCacheHandler.hasMember(key,userId);

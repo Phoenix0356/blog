@@ -58,17 +58,18 @@ public class ArticleServiceImpl implements ArticleService{
         }finally {
             reentrantLock.unlock();
         }
-
+        //加上缓存中的点赞数
+        articleData.setArticleUpvoteCount(articleData.getArticleUpvoteCount()+articleUpVoteManager.getCacheSize(articleId));
         //TODO:可以抽象出一个类，感觉过于繁琐
         ArticleVO articleVO = ArticleVO.buildVO(article,articleData);
         if (TokenContext.getUserId()!=null){
             if (articleUpVoteManager.isArticleUpvoteByUser(articleId,TokenContext.getUserId())){
                 articleVO.setArticleDataState(MessageType.UPVOTE.getIdentifier());
             }else {
-                articleVO.setArticleDataState(MessageType.UPVOTE_CANCEL.getIdentifier());
+                articleVO.setArticleDataState(MessageType.NO_OPERATION.getIdentifier());
             }
         }else {
-            articleVO.setArticleDataState(0);
+            articleVO.setArticleDataState(MessageType.NO_OPERATION.getIdentifier());
         }
 
         return articleVO;

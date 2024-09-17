@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum MessageType {
+    NO_OPERATION("NO_OPERATION",0b1010),
     UPVOTE("UPVOTE",0b0001),
     UPVOTE_CANCEL("UPVOTE_CANCEL",0b0010),
     BOOKMARK("BOOKMARK",0b0100),

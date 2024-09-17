@@ -19,7 +19,7 @@ public class ACAutomatonInitializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         automaton.init(wordManager.loadAllWord());
-        log.info("敏感词匹配器初始化完成");
-        System.out.println(automaton.getSize());
+        log.info("敏感词匹配器初始化完成,匹配器节点数量{}",automaton.getSize());
+
     }
 }
