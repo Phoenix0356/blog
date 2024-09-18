@@ -23,7 +23,6 @@ public class AuthorizationAspect {
     }
     @Before(value = "point()")
     public void authorizeRole(JoinPoint joinPoint){
-
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();
 
