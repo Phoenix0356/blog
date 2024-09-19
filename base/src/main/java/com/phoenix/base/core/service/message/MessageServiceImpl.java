@@ -1,4 +1,4 @@
-package com.phoenix.base.core.service.impl;
+package com.phoenix.base.core.service.message;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.phoenix.base.core.mapper.ArticleMapper;
@@ -8,7 +8,7 @@ import com.phoenix.base.enumeration.MessageType;
 import com.phoenix.base.model.entity.Article;
 import com.phoenix.base.model.entity.ArticleMessage;
 import com.phoenix.base.model.vo.ArticleMessageVO;
-import com.phoenix.common.util.DataUtil;
+import com.phoenix.base.model.dto.MessageDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,6 @@ public class MessageServiceImpl implements MessageService{
     public ArticleMessageVO getMessageByMessageId(String messageId) {
         ArticleMessage articleMessage = messageMapper.selectById(messageId);
         Article article = articleMapper.selectById(articleMessage.getMessageId());
-//        User user = userMapper.selectById(articleMessage.getMessageProducerId());
         return ArticleMessageVO.buildVO(article.getArticleTitle(), articleMessage);
     }
 
@@ -41,12 +40,12 @@ public class MessageServiceImpl implements MessageService{
     @Override
     public void confirmMessage(String receiverId, int messageTypeNum) {
 
-        if (DataUtil.isOptionChosen(messageTypeNum,MessageType.UPVOTE.getIdentifier())){
+        if (MessageUtil.isOptionChosen(messageTypeNum,MessageType.UPVOTE.getIdentifier())){
             messageMapper.savePulledMessage(receiverId,MessageType.UPVOTE.name());
         }
 
-        if (DataUtil.isOptionChosen(messageTypeNum,MessageType.BOOKMARK.getIdentifier())||
-                DataUtil.isOptionChosen(messageTypeNum,MessageType.BOOKMARK_CANCEL.getIdentifier())
+        if (MessageUtil.isOptionChosen(messageTypeNum,MessageType.BOOKMARK.getIdentifier())||
+                MessageUtil.isOptionChosen(messageTypeNum,MessageType.BOOKMARK_CANCEL.getIdentifier())
         ){
             messageMapper.savePulledMessage(receiverId,MessageType.BOOKMARK.name());
             messageMapper.savePulledMessage(receiverId,MessageType.BOOKMARK_CANCEL.name());
@@ -56,7 +55,10 @@ public class MessageServiceImpl implements MessageService{
 
     @Override
     @Async("asyncServiceExecutor")
-    public void saveMessage(String messageRelatedArticleId, MessageType messageType, String producerId, String receiverId) {
+    public void saveMessage(MessageDTO messageDTO,MessageType messageType) {
+        String producerId = messageDTO.getOperatorUserId();
+        String receiverId = messageDTO.getArticleUserId();
+        String messageRelatedArticleId = messageDTO.getArticleId();
         if (Objects.equals(producerId, receiverId)) return;
         Article article = articleMapper.selectById(messageRelatedArticleId);
         ArticleMessage articleMessage = messageMapper.selectOne(new QueryWrapper<ArticleMessage>()

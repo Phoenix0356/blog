@@ -1,6 +1,8 @@
 package com.phoenix.base.core.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.phoenix.base.core.service.message.MessageUtil;
+import com.phoenix.base.core.service.message.chain.MessageChainHandler;
 import com.phoenix.common.constant.RespMessageConstant;
 import com.phoenix.common.constant.SortConstant;
 import com.phoenix.base.context.TokenContext;
@@ -9,6 +11,7 @@ import com.phoenix.base.core.mapper.ArticleMapper;
 import com.phoenix.base.core.service.ArticleService;
 import com.phoenix.base.core.service.MessageService;
 import com.phoenix.base.enumeration.MessageType;
+import com.phoenix.base.model.dto.MessageDTO;
 import com.phoenix.common.exceptions.clientException.NotFoundException;
 import com.phoenix.common.dto.ArticleDTO;
 import com.phoenix.base.model.entity.Article;
@@ -36,6 +39,7 @@ public class ArticleServiceImpl implements ArticleService{
     private final ArticleUpVoteManager articleUpVoteManager;
     private final ArticleDataManager articleDataManager;
     private final ArticleManager articleManager;
+    private final MessageChainHandler messageChainHandler;
     static final LinkedConcurrentMap<String,ReentrantLock> articleStaticsLockPool = new LinkedConcurrentMap<>();
 
     //TODO：这个方法应该异步修改文章阅读量，加快返回速度
@@ -140,8 +144,6 @@ public class ArticleServiceImpl implements ArticleService{
                     .setArticleReviseTime(new Timestamp(System.currentTimeMillis()));
             articleMapper.updateById(article);
             articleManager.deleteArticleInCache(articleId);
-
-            System.out.println("我被执行了");
         }finally {
             reentrantLock.unlock();
         }
@@ -161,35 +163,17 @@ public class ArticleServiceImpl implements ArticleService{
             ArticleData articleData = articleDataManager.selectByArticleId(articleId);
 
             String articleUserId = article.getArticleUserId();
-            int articleBookMarkCount = articleData.getArticleBookmarkCount();
             int messageType = articleDTO.getArticleMessageType();
-            //TODO:重复代码有点多
-            //如果被点赞，就更新缓存，并将事件存入消息表
-            if (DataUtil.isOptionChosen(messageType, MessageType.UPVOTE.getIdentifier())){
-                articleUpVoteManager.setUserIntoCache(articleId,operatorUserId);
-                messageService.saveMessage(articleId,MessageType.UPVOTE,
-                        operatorUserId,articleUserId);
-            }
-            //如果被取消点赞，就更新缓存，并将事件存入消息表
-            if (DataUtil.isOptionChosen(messageType, MessageType.UPVOTE_CANCEL.getIdentifier())){
-                articleUpVoteManager.deleteUserFromCache(articleId,operatorUserId);
-                messageService.saveMessage(articleId,MessageType.UPVOTE_CANCEL,
-                        operatorUserId,articleUserId);
-            }
-            //如果被收藏，将事件存入消息表
-            if (DataUtil.isOptionChosen(messageType, MessageType.BOOKMARK.getIdentifier())){
-                articleData.setArticleBookmarkCount(articleBookMarkCount+1);
-                messageService.saveMessage(articleId,MessageType.BOOKMARK,
-                        operatorUserId,articleUserId);
-            }
 
-            //如果被取消收藏，将事件存入消息表
-            if (DataUtil.isOptionChosen(messageType, MessageType.BOOKMARK_CANCEL.getIdentifier())){
-                articleData.setArticleBookmarkCount(articleBookMarkCount-1);
-                messageService.saveMessage(articleId,MessageType.BOOKMARK_CANCEL,
-                        operatorUserId,articleUserId);
-            }
+            MessageDTO messageDTO = new MessageDTO();
 
+            messageDTO.setArticleId(articleId)
+                    .setMessageType(messageType)
+                    .setArticleUserId(articleUserId)
+                    .setOperatorUserId(operatorUserId)
+                    .setArticleData(articleData);
+
+            messageChainHandler.handle(messageDTO);
             articleDataManager.update(articleData);
         }finally{
             reentrantLock.unlock();
@@ -205,8 +189,14 @@ public class ArticleServiceImpl implements ArticleService{
             ArticleData articleStatic = articleDataManager.selectByArticleId(articleId);
             articleStatic.setArticleBookmarkCount(articleStatic.getArticleBookmarkCount()-1);
             articleDataManager.update(articleStatic);
-            messageService.saveMessage(articleId, MessageType.BOOKMARK_CANCEL,
-                    TokenContext.getUserId(),article.getArticleUserId());
+
+            MessageDTO messageDTO = new MessageDTO();
+            messageDTO.setArticleId(articleId)
+                    .setMessageType(MessageType.BOOKMARK.getIdentifier())
+                    .setArticleUserId(article.getArticleUserId())
+                    .setOperatorUserId(TokenContext.getUserId());
+
+            messageService.saveMessage(messageDTO,MessageType.BOOKMARK);
         }finally {
             reentrantLock.unlock();
         }
