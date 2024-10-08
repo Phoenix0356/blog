@@ -43,7 +43,6 @@ public class MessageServiceImpl implements MessageService{
         if (MessageUtil.isOptionChosen(messageTypeNum, DataStateType.UPVOTE.getIdentifier())){
             messageMapper.savePulledMessage(receiverId, DataStateType.UPVOTE.name());
         }
-
         if (MessageUtil.isOptionChosen(messageTypeNum, DataStateType.BOOKMARK.getIdentifier())||
                 MessageUtil.isOptionChosen(messageTypeNum, DataStateType.BOOKMARK_CANCEL.getIdentifier())
         ){
