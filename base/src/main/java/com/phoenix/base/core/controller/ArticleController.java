@@ -1,7 +1,6 @@
 package com.phoenix.base.core.controller;
 
 import com.phoenix.common.annotation.AuthorizationRequired;
-import com.phoenix.common.client.FilterServiceClient;
 import com.phoenix.common.constant.RespMessageConstant;
 import com.phoenix.base.context.TokenContext;
 import com.phoenix.base.core.service.ArticleService;
@@ -21,7 +20,6 @@ import java.util.List;
 public class ArticleController {
 
     final ArticleService articleService;
-    final FilterServiceClient filterServiceClient;
 
     @GetMapping("/visitor/{articleId}")
     @AuthorizationRequired(Role.VISITOR)

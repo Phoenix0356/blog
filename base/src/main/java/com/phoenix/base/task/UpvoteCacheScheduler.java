@@ -17,7 +17,7 @@ public class UpvoteCacheScheduler {
 
     final ArticleUpVoteManager articleUpVoteManager;
 
-    @Scheduled(cron = "0 0 8-23 * * ?")
+    @Scheduled(cron = "0 */10 8-23 * * ?")
     public void importUpvoteDataFromCache(){
         articleUpVoteManager.importCachePersistence();
         log.info("{} 点赞缓存入库完成", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));

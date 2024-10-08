@@ -1,7 +1,6 @@
-package com.phoenix.base.core.service.message.chain;
+package com.phoenix.base.core.service.data.chain;
 
 import com.phoenix.base.model.dto.MessageDTO;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
 @Component

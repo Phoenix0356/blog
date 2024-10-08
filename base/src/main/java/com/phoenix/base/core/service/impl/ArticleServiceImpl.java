@@ -1,16 +1,15 @@
 package com.phoenix.base.core.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.phoenix.base.core.service.message.MessageUtil;
-import com.phoenix.base.core.service.message.chain.MessageChainHandler;
+import com.phoenix.base.core.service.data.ArticleDataStateHandler;
+import com.phoenix.base.core.service.data.chain.DataChangeChainHandler;
+import com.phoenix.base.enumeration.DataStateType;
 import com.phoenix.common.constant.RespMessageConstant;
 import com.phoenix.common.constant.SortConstant;
 import com.phoenix.base.context.TokenContext;
 import com.phoenix.base.core.manager.*;
 import com.phoenix.base.core.mapper.ArticleMapper;
 import com.phoenix.base.core.service.ArticleService;
-import com.phoenix.base.core.service.MessageService;
-import com.phoenix.base.enumeration.MessageType;
 import com.phoenix.base.model.dto.MessageDTO;
 import com.phoenix.common.exceptions.clientException.NotFoundException;
 import com.phoenix.common.dto.ArticleDTO;
@@ -22,6 +21,7 @@ import com.phoenix.base.model.pojo.LinkedConcurrentMap;
 import com.phoenix.common.util.DataUtil;
 import com.phoenix.base.model.vo.ArticleVO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -30,53 +30,51 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ArticleServiceImpl implements ArticleService{
     private final ArticleMapper articleMapper;
-    private final MessageService messageService;
+
     private final ArticleTagManager articleTagManager;
     private final ArticleUpVoteManager articleUpVoteManager;
     private final ArticleDataManager articleDataManager;
     private final ArticleManager articleManager;
-    private final MessageChainHandler messageChainHandler;
+
+    private final DataChangeChainHandler dataChangeChainHandler;
+    private final ArticleDataStateHandler articleDataStateHandler;
     static final LinkedConcurrentMap<String,ReentrantLock> articleStaticsLockPool = new LinkedConcurrentMap<>();
 
-    //TODO：这个方法应该异步修改文章阅读量，加快返回速度
     @Override
     public ArticleVO getArticleDetailById(String articleId) {
         if (DataUtil.isEmptyData(articleId)) throw new InvalidateArgumentException();
 
         Article article;
         ArticleData articleData;
+        int upvoteCount;
 
         ReentrantLock reentrantLock = articleStaticsLockPool.getIfAbsent(articleId, ReentrantLock.class);
         reentrantLock.lock();
         try{
-            //获取缓存
+            //获取文章静态内容缓存
             article = articleManager.selectArticleInCache(articleId);
-            //更新阅读量
+            //获取文章动态数据，并更新阅读量
             articleData = articleDataManager.selectByArticleId(articleId);
             articleData.setArticleReadCount(articleData.getArticleReadCount()+1);
             articleDataManager.update(articleData);
+            //获取数据库和缓存中的点赞数
+             upvoteCount = articleUpVoteManager.getArticleUpvoteCount(articleId);
         }finally {
             reentrantLock.unlock();
         }
-        //加上缓存中的点赞数
-        articleData.setArticleUpvoteCount(articleData.getArticleUpvoteCount()+articleUpVoteManager.getCacheSize(articleId));
-        //TODO:可以抽象出一个类，感觉过于繁琐
-        ArticleVO articleVO = ArticleVO.buildVO(article,articleData);
-        if (TokenContext.getUserId()!=null){
-            if (articleUpVoteManager.isArticleUpvoteByUser(articleId,TokenContext.getUserId())){
-                articleVO.setArticleDataState(MessageType.UPVOTE.getIdentifier());
-            }else {
-                articleVO.setArticleDataState(MessageType.NO_OPERATION.getIdentifier());
-            }
-        }else {
-            articleVO.setArticleDataState(MessageType.NO_OPERATION.getIdentifier());
-        }
 
-        return articleVO;
+        ArticleVO articleVO = ArticleVO.buildVO(article,articleData);
+        //获取用户的点赞、收藏情况
+        System.out.println(TokenContext.getUserId());
+        articleVO.setArticleDataState(articleDataStateHandler
+                .getArticleDataState(TokenContext.getUserId(), articleId));
+        articleVO.setArticleUpvoteCount(upvoteCount);
+    return articleVO;
     }
 
     @Override
@@ -121,7 +119,6 @@ public class ArticleServiceImpl implements ArticleService{
         ArticleData articleData = new ArticleData();
         articleData.setArticleId(article.getArticleId())
                 .setArticleReadCount(0)
-                .setArticleUpvoteCount(0)
                 .setArticleBookmarkCount(0);
         articleDataManager.insert(articleData);
 
@@ -163,17 +160,16 @@ public class ArticleServiceImpl implements ArticleService{
             ArticleData articleData = articleDataManager.selectByArticleId(articleId);
 
             String articleUserId = article.getArticleUserId();
-            int messageType = articleDTO.getArticleMessageType();
+            int articleDataChangedState = articleDTO.getArticleDataChangedState();
 
             MessageDTO messageDTO = new MessageDTO();
-
             messageDTO.setArticleId(articleId)
-                    .setMessageType(messageType)
+                    .setArticleDataChangedState(articleDataChangedState)
+                    .setArticleDataState(articleDataStateHandler.getArticleDataState(operatorUserId, articleId))
                     .setArticleUserId(articleUserId)
                     .setOperatorUserId(operatorUserId)
                     .setArticleData(articleData);
-
-            messageChainHandler.handle(messageDTO);
+            dataChangeChainHandler.handle(messageDTO);
             articleDataManager.update(articleData);
         }finally{
             reentrantLock.unlock();
@@ -186,17 +182,17 @@ public class ArticleServiceImpl implements ArticleService{
         reentrantLock.lock();
         try {
             Article article = articleManager.selectArticleInCache(articleId);
-            ArticleData articleStatic = articleDataManager.selectByArticleId(articleId);
-            articleStatic.setArticleBookmarkCount(articleStatic.getArticleBookmarkCount()-1);
-            articleDataManager.update(articleStatic);
-
+            ArticleData articleData = articleDataManager.selectByArticleId(articleId);
+            String operateUserId = TokenContext.getUserId();
             MessageDTO messageDTO = new MessageDTO();
             messageDTO.setArticleId(articleId)
-                    .setMessageType(MessageType.BOOKMARK.getIdentifier())
+                    .setArticleDataChangedState(DataStateType.BOOKMARK_CANCEL.getIdentifier())
+                    .setArticleDataState(articleDataStateHandler.getArticleDataState(operateUserId,articleId))
                     .setArticleUserId(article.getArticleUserId())
-                    .setOperatorUserId(TokenContext.getUserId());
+                    .setOperatorUserId(operateUserId)
+                    .setArticleData(articleData);
 
-            messageService.saveMessage(messageDTO,MessageType.BOOKMARK);
+            dataChangeChainHandler.handle(messageDTO);
         }finally {
             reentrantLock.unlock();
         }

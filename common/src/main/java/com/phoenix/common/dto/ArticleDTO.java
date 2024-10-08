@@ -17,5 +17,5 @@ public class ArticleDTO {
 
     String articlePublishTime;
 
-    int articleMessageType;
+    int articleDataChangedState;
 }

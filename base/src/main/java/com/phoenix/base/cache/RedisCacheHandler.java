@@ -14,7 +14,7 @@ public abstract class RedisCacheHandler {
     protected final long DEFAULT_EXPIRE_TIME = 86400;
     protected final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.SECONDS;
 
-    public Boolean exist(String key){
+    public Boolean existKey(String key){
          return redisTemplate.hasKey(key);
     }
 

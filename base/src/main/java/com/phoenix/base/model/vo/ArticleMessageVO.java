@@ -21,7 +21,7 @@ public class ArticleMessageVO {
         return ArticleMessageVO.builder()
                 .messageId(articleMessage.getMessageId())
                 .messageRelatedArticleName(messageRelatedArticleName)
-                .messageType(articleMessage.getMessageType().name())
+                .messageType(articleMessage.getDataStateType().name())
                 .messageIsPulled(articleMessage.isMessageIsPulled())
                 .messageGenerateTime(articleMessage.getMessageGenerateTime().toString())
                 .build();

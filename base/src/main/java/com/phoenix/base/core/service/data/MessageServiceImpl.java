@@ -1,10 +1,10 @@
-package com.phoenix.base.core.service.message;
+package com.phoenix.base.core.service.data;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.phoenix.base.core.mapper.ArticleMapper;
 import com.phoenix.base.core.mapper.MessageMapper;
 import com.phoenix.base.core.service.MessageService;
-import com.phoenix.base.enumeration.MessageType;
+import com.phoenix.base.enumeration.DataStateType;
 import com.phoenix.base.model.entity.Article;
 import com.phoenix.base.model.entity.ArticleMessage;
 import com.phoenix.base.model.vo.ArticleMessageVO;
@@ -40,22 +40,22 @@ public class MessageServiceImpl implements MessageService{
     @Override
     public void confirmMessage(String receiverId, int messageTypeNum) {
 
-        if (MessageUtil.isOptionChosen(messageTypeNum,MessageType.UPVOTE.getIdentifier())){
-            messageMapper.savePulledMessage(receiverId,MessageType.UPVOTE.name());
+        if (MessageUtil.isOptionChosen(messageTypeNum, DataStateType.UPVOTE.getIdentifier())){
+            messageMapper.savePulledMessage(receiverId, DataStateType.UPVOTE.name());
         }
 
-        if (MessageUtil.isOptionChosen(messageTypeNum,MessageType.BOOKMARK.getIdentifier())||
-                MessageUtil.isOptionChosen(messageTypeNum,MessageType.BOOKMARK_CANCEL.getIdentifier())
+        if (MessageUtil.isOptionChosen(messageTypeNum, DataStateType.BOOKMARK.getIdentifier())||
+                MessageUtil.isOptionChosen(messageTypeNum, DataStateType.BOOKMARK_CANCEL.getIdentifier())
         ){
-            messageMapper.savePulledMessage(receiverId,MessageType.BOOKMARK.name());
-            messageMapper.savePulledMessage(receiverId,MessageType.BOOKMARK_CANCEL.name());
+            messageMapper.savePulledMessage(receiverId, DataStateType.BOOKMARK.name());
+            messageMapper.savePulledMessage(receiverId, DataStateType.BOOKMARK_CANCEL.name());
         }
 
     }
 
     @Override
     @Async("asyncServiceExecutor")
-    public void saveMessage(MessageDTO messageDTO,MessageType messageType) {
+    public void saveMessage(MessageDTO messageDTO, DataStateType dataStateType) {
         String producerId = messageDTO.getOperatorUserId();
         String receiverId = messageDTO.getArticleUserId();
         String messageRelatedArticleId = messageDTO.getArticleId();
@@ -65,7 +65,7 @@ public class MessageServiceImpl implements MessageService{
                         .eq("message_producer_id",producerId)
                         .eq("message_receiver_id",article.getArticleUserId())
                         .eq("message_related_article_id",article.getArticleId())
-                        .eq("message_type",messageType)
+                        .eq("message_type", dataStateType)
                         .orderByDesc("message_generate_time")
                         .last("Limit 1")
         );
@@ -74,7 +74,7 @@ public class MessageServiceImpl implements MessageService{
             articleMessage.setMessageProducerId(producerId)
                     .setMessageReceiverId(receiverId)
                     .setMessageRelatedArticleId(messageRelatedArticleId)
-                    .setMessageType(messageType)
+                    .setDataStateType(dataStateType)
                     .setMessageIsPulled(false)
                     .setMessageGenerateTime(new Timestamp(System.currentTimeMillis()));
             messageMapper.insert(articleMessage);

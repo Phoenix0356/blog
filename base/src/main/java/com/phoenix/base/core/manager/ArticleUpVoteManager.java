@@ -2,10 +2,9 @@ package com.phoenix.base.core.manager;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.phoenix.base.cache.SetCacheHandler;
-import com.phoenix.base.cache.StringCacheHandler;
 import com.phoenix.base.core.mapper.ArticleUpvoteMapper;
 import com.phoenix.base.enumeration.CachePrefix;
-import com.phoenix.base.model.entity.ArticleUpvote;
+import com.phoenix.base.model.entity.ArticleUpvoteRelation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -20,7 +19,6 @@ import java.util.stream.Collectors;
 public class ArticleUpVoteManager{
 
     final ArticleUpvoteMapper articleUpvoteMapper;
-    final StringCacheHandler stringCacheHandler;
     final SetCacheHandler setCacheHandler;
 
     private String assembleCacheKey(String id){
@@ -31,52 +29,59 @@ public class ArticleUpVoteManager{
         String[] keyParts = key.split(":");
         return keyParts[keyParts.length-1];
     }
-    private void loadCache(String articleId){
-        String key = assembleCacheKey(articleId);
+    private void loadCacheIfNotExist(String key){
         //如果文章点赞集合在缓存中,直接返回
-        if (setCacheHandler.exist(key)) {
+        if (setCacheHandler.existKey(key)) {
             return;
         }
-        List<Object> upvoteUserList = selectListByArticleId(key)
+        List<Object> upvoteUserList = selectListByArticleId(removeKeyPrefix(key))
                 .stream()
-                .map(articleUpvote-> (Object)articleUpvote.getUpvoteUserId())
+                .map(articleUpvoteRelation -> (Object) articleUpvoteRelation.getUpvoteUserId())
                 .toList();
         if (!upvoteUserList.isEmpty()) {
             setCacheHandler.setList(key,upvoteUserList);
         }
     }
+
     public Set<String> loadAndGetCache(String articleId){
         String key = assembleCacheKey(articleId);
-        loadCache(key);
+        loadCacheIfNotExist(key);
         return setCacheHandler.getSet(key)
                 .stream()
                 .map(userId -> (String)userId)
                 .collect(Collectors.toSet());
     }
-    public int getCacheSize(String articleId){
+
+    public int getArticleUpvoteCount(String articleId){
         String key = assembleCacheKey(articleId);
+        loadCacheIfNotExist(key);
         return Math.toIntExact(setCacheHandler.size(key));
     }
     public Boolean isArticleUpvoteByUser(String articleId,String userId){
         String key = assembleCacheKey(articleId);
-        return setCacheHandler.hasMember(key,userId);
+        loadCacheIfNotExist(key);
+        boolean flag = setCacheHandler.hasMember(key,userId);
+        System.out.println(flag);
+        return flag;
     }
 
-    public void setUserIntoCache(String articleId, String userId){
+    public void addUpvoteUser(String articleId, String userId){
         String key = assembleCacheKey(articleId);
-        loadCache(key);
+        loadCacheIfNotExist(key);
         setCacheHandler.set(key,userId);
     }
 
-    public void deleteUserFromCache(String articleId, String userId){
+    public void deleteUpvoteUser(String articleId, String userId){
         String key = assembleCacheKey(articleId);
-        loadCache(key);
+        loadCacheIfNotExist(key);
         setCacheHandler.deleteFromSet(key,userId);
+        //从数据库中删除
+        delete(articleId,userId);
     }
 
-    public List<ArticleUpvote> selectListByArticleId(String articleId){
+    public List<ArticleUpvoteRelation> selectListByArticleId(String articleId){
         return articleUpvoteMapper
-                .selectList(new QueryWrapper<ArticleUpvote>().eq("article_id",articleId));
+                .selectList(new QueryWrapper<ArticleUpvoteRelation>().eq("article_id",articleId));
     }
 
     public void importCachePersistence(){
@@ -84,12 +89,26 @@ public class ArticleUpVoteManager{
         keys.forEach(key->{
             Set<Object> userIdSet = setCacheHandler.getSet(key);
             userIdSet.forEach(userId->{
-                ArticleUpvote articleUpvote = new ArticleUpvote();
-                articleUpvote.setArticleId(removeKeyPrefix(key));
-                articleUpvote.setUpvoteUserId((String) userId);
-                articleUpvoteMapper.insert(articleUpvote);
+                //插入记录行
+                ArticleUpvoteRelation articleUpvoteRelation = new ArticleUpvoteRelation();
+                articleUpvoteRelation.setArticleId(removeKeyPrefix(key))
+                                .setUpvoteUserId((String) userId);
+                articleUpvoteMapper.insertIgnore(articleUpvoteRelation);
             });
+            //删除缓存key
+            setCacheHandler.deleteKey(key);
         });
         log.info("{} 个点赞缓存数据入库成功",keys.size());
     }
+
+    public void delete(String articleId,String userId){
+        int result = articleUpvoteMapper.delete(new QueryWrapper<ArticleUpvoteRelation>()
+                .eq("article_id",articleId)
+                .eq("upvote_user_id",userId)
+        );
+        if (result == 0){
+            log.error("ID为 {} 的用户对ID为 {} 的文章的点赞记录从数据库删除失败",userId,articleId);
+        }
+    }
+
 }

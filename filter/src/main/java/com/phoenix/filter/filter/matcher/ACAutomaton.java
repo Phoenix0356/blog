@@ -136,7 +136,7 @@ public class ACAutomaton {
         public Node(Node parentNode,Character val,boolean isLast) {
             this.parentNode = parentNode;
             this.val = val;
-            this.depth = parentNode.depth +1;
+            this.depth = parentNode.depth + 1;
             this.isLast = isLast;
             this.reMatchNode = null;
             this.childrenNodes = new HashMap<>();

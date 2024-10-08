@@ -23,9 +23,6 @@ public class ArticleData {
     @TableField("article_read_count")
     private int articleReadCount;
 
-    @TableField("article_upvote_count")
-    private int articleUpvoteCount;
-
     @TableField("article_bookmark_count")
     private int articleBookmarkCount;
 

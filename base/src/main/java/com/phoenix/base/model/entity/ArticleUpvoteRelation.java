@@ -16,9 +16,9 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @TableName("article_upvote")
 @Accessors(chain = true)
-public class ArticleUpvote {
-    @TableId(value = "article_upvote_id", type = IdType.ASSIGN_UUID)
-    private String articleUpvoteId;
+public class ArticleUpvoteRelation {
+    @TableId(value = "article_upvote_id", type = IdType.AUTO)
+    private int articleUpvoteId;
 
     @TableField("article_id")
     private String articleId;

@@ -1,6 +1,5 @@
 package com.phoenix.base.cache;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -35,5 +34,8 @@ public class SetCacheHandler extends RedisCacheHandler{
 
     public void deleteFromSet(String key, Object value) {
         redisTemplate.opsForSet().remove(key, value);
+    }
+    public void deleteKey(String key) {
+        redisTemplate.delete(key);
     }
 }
