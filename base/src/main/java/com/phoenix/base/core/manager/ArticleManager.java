@@ -32,4 +32,7 @@ public class ArticleManager {
         stringCacheHandler.deleteCache(key);
     }
 
+    public Article selectArticleById(String articleId){
+        return articleMapper.selectById(articleId);
+    }
 }

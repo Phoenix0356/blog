@@ -22,8 +22,7 @@ public class ArticleDataStateHandler {
         int articleDataState = DataStateType.NO_OPERATION.getIdentifier();
         //如果是游客，则直接返回无操作
         if(userId == null){
-            System.out.println("userId is null");
-             return articleDataState;
+            return articleDataState;
         }
         //如果已点赞
         if(articleUpVoteManager.isArticleUpvoteByUser(articleId,userId)){

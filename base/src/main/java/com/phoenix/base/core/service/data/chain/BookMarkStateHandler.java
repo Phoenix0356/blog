@@ -18,17 +18,15 @@ public class BookMarkStateHandler implements Handler{
         //提取目标二进制位
         int bookmarkState = messageDTO.getArticleDataState()&DataStateType.BOOKMARK.getIdentifier();
         int bookmarkChangedState = messageDTO.getArticleDataState()&DataStateType.BOOKMARK.getIdentifier();
-
+        //Todo:目前这个if必然为true,会直接返回
         //如果目标位相等说明没变化，直接返回
         if(bookmarkState==bookmarkChangedState){
             return;
         }
         //如果改变
         if(bookmarkChangedState == 1){
-            articleData.setArticleBookmarkCount(articleData.getArticleBookmarkCount()+1);
             messageService.saveMessage(messageDTO, DataStateType.BOOKMARK);
         }else{
-            articleData.setArticleBookmarkCount(articleData.getArticleBookmarkCount()-1);
             messageService.saveMessage(messageDTO, DataStateType.BOOKMARK_CANCEL);
         }
     }

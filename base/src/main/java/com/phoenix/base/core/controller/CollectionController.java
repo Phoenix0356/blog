@@ -49,7 +49,7 @@ public class CollectionController {
     @AuthorizationRequired(Role.MEMBER)
     @FilterNeeded
     public ResultVO saveArticleIntoCollection(@RequestBody CollectionAddDTO collectionAddDTO){
-        collectionService.saveArticleIntoCollection(collectionAddDTO,TokenContext.getUserId());
+        collectionService.saveArticleIntoCollection(collectionAddDTO);
         return ResultVO.success(RespMessageConstant.SAVE_SUCCESS);
     }
 

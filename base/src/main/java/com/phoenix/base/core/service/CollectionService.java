@@ -13,7 +13,7 @@ public interface CollectionService {
     List<CollectionVO> getAllCollections();
     List<ArticleVO> getAllArticleList(String collectionId);
 
-    void saveArticleIntoCollection(CollectionAddDTO collectionAddDTO, String userId);
+    void saveArticleIntoCollection(CollectionAddDTO collectionAddDTO);
 
     void saveNoteIntoArticle(String articleId, ArticleNoteDTO articleNoteDTO);
 

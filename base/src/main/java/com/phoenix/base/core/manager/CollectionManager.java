@@ -1,7 +1,11 @@
 package com.phoenix.base.core.manager;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.phoenix.base.core.controller.ArticleController;
+import com.phoenix.base.core.mapper.ArticleCollectionMapper;
 import com.phoenix.base.core.mapper.CollectionMapper;
+import com.phoenix.base.core.service.CollectionService;
+import com.phoenix.base.model.entity.ArticleCollectionRelation;
 import com.phoenix.base.model.entity.Collection;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +18,7 @@ import java.util.List;
 @Slf4j
 public class CollectionManager {
     private final CollectionMapper collectionMapper;
+    private final ArticleCollectionMapper articleCollectionMapper;
 
     public Collection select(String collectionId) {
         return collectionMapper.selectById(collectionId);
@@ -34,5 +39,20 @@ public class CollectionManager {
             }
         }
         return false;
+    }
+
+    public int getArticleCollectedCount(String articleId){
+        List<ArticleCollectionRelation> articleCollectionRelationList = articleCollectionMapper
+                .selectList(new QueryWrapper<ArticleCollectionRelation>()
+                .eq("article_id", articleId));
+        return articleCollectionRelationList.size();
+    }
+
+    public void insertArticleCollectionManager(ArticleCollectionRelation articleCollectionRelation){
+        int result = articleCollectionMapper.insert(articleCollectionRelation);
+        if(result != 1){
+            log.error("插入收藏夹ID为 {} ，文章ID为 {} 的关系对象失败", articleCollectionRelation.getArticleId()
+                    , articleCollectionRelation.getCollectionId());
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.phoenix.base.core.controller;
 
+import com.phoenix.base.model.vo.ArticleDataVO;
 import com.phoenix.common.annotation.AuthorizationRequired;
 import com.phoenix.common.constant.RespMessageConstant;
 import com.phoenix.base.context.TokenContext;
@@ -37,9 +38,15 @@ public class ArticleController {
     @GetMapping("/list")
     @AuthorizationRequired(Role.WRITER)
     public ResultVO getUserArticleListById(){
-        List<ArticleVO> articleVOList;
-        articleVOList = articleService.getArticleUserList(TokenContext.getUserId());
+        List<ArticleVO> articleVOList = articleService.getArticleUserList(TokenContext.getUserId());
         return ResultVO.success(RespMessageConstant.GET_SUCCESS,articleVOList);
+    }
+
+    @GetMapping("/data/{articleId}")
+    @AuthorizationRequired(Role.MEMBER)
+    public ResultVO getArticleDataState(@PathVariable("articleId") String articleId){
+        ArticleDataVO articleDataVO = articleService.getArticleDataStateById(articleId);
+        return ResultVO.success(RespMessageConstant.GET_SUCCESS,articleDataVO);
     }
 
     @PostMapping("/save")
@@ -51,7 +58,6 @@ public class ArticleController {
         return ResultVO.success(RespMessageConstant.SAVE_SUCCESS,articleVO);
     }
 
-    //更新文章内容
     @PutMapping("/update/content")
     @AuthorizationRequired(Role.WRITER)
     @FilterNeeded
@@ -60,11 +66,17 @@ public class ArticleController {
         return ResultVO.success(RespMessageConstant.UPDATE_SUCCESS);
     }
 
-    //更新点赞数和收藏数
     @PutMapping("/update/data")
     @AuthorizationRequired(Role.MEMBER)
-    public ResultVO updateArticleData(@RequestBody ArticleDTO articleDTO){
-        articleService.updateArticleData(articleDTO);
+    public ResultVO updateAuthorizedArticleData(@RequestBody ArticleDTO articleDTO){
+        articleService.updateAuthorizedArticleData(articleDTO);
+        return ResultVO.success(RespMessageConstant.UPDATE_SUCCESS);
+    }
+
+    @PutMapping("/visitor/update/{articleId}")
+    @AuthorizationRequired(Role.VISITOR)
+    public ResultVO updateCommonArticleData(@PathVariable("articleId") String articleId){
+        articleService.updateCommonArticleData(articleId);
         return ResultVO.success(RespMessageConstant.UPDATE_SUCCESS);
     }
 

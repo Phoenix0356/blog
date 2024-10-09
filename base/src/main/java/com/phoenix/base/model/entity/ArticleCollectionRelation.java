@@ -9,21 +9,23 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("article_data")
+@TableName("collection_article_list")
 @Accessors(chain = true)
-public class ArticleData {
+public class ArticleCollectionRelation {
+    @TableId(value = "collection_article_list_id", type = IdType.AUTO)
+    private String collectionArticleListId;
 
-    @TableId(value = "article_data_id", type = IdType.ASSIGN_UUID)
-    private String articleDataId;
+    @TableField(value = "collection_id")
+    private String collectionId;
 
-    @TableField("article_read_count")
-    private int articleReadCount;
-
-    @TableField("article_id")
+    @TableField(value = "article_id")
     private String articleId;
 
+    @TableField(value = "collection_article_note")
+    private String collectionArticleNote;
 }

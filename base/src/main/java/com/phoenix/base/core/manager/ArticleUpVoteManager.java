@@ -60,9 +60,7 @@ public class ArticleUpVoteManager{
     public Boolean isArticleUpvoteByUser(String articleId,String userId){
         String key = assembleCacheKey(articleId);
         loadCacheIfNotExist(key);
-        boolean flag = setCacheHandler.hasMember(key,userId);
-        System.out.println(flag);
-        return flag;
+        return setCacheHandler.hasMember(key,userId);
     }
 
     public void addUpvoteUser(String articleId, String userId){
