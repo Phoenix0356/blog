@@ -13,6 +13,13 @@
     <version>3.3.2</version>
     <relativePath/>
   </parent>
+    <modules>
+        <module>common</module>  <!-- common 模块先被构建 -->
+        <module>user</module>
+        <module>filter</module>
+        <module>gateway</module>
+        <module>base</module>
+    </modules>
 
   <name>blog</name>
   <url>https://maven.apache.org</url>
@@ -79,6 +86,12 @@
           <artifactId>jjwt</artifactId>
           <version>0.12.3</version>
         </dependency>
+
+      <dependency>
+          <groupId>org.json</groupId>
+          <artifactId>json</artifactId>
+          <version>20231013</version>
+      </dependency>
 
         <dependency>
           <groupId>javax.servlet</groupId>

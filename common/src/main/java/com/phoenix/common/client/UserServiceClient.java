@@ -19,6 +19,12 @@ public interface UserServiceClient {
     @GetMapping("/get")
     ResultVO getUserById(@RequestBody String userId);
 
+    @GetMapping("/inner/token")
+    String generateToken();
+
+    @PutMapping("/inner/session")
+    String setDefaultSession();
+
     @PutMapping("/update")
     ResultVO updateUser(@RequestBody UserDTO userDTO);
 

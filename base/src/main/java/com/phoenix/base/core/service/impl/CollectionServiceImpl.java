@@ -21,7 +21,6 @@ import com.phoenix.common.util.DataUtil;
 import com.phoenix.common.exceptions.clientException.AlreadyContainsException;
 import com.phoenix.common.exceptions.clientException.CollectionExistException;
 import com.phoenix.common.exceptions.clientException.NotFoundException;
-import com.phoenix.base.model.entity.Article;
 import com.phoenix.base.model.vo.ArticleVO;
 import com.phoenix.base.model.vo.CollectionVO;
 import lombok.RequiredArgsConstructor;
@@ -97,7 +96,7 @@ public class CollectionServiceImpl implements CollectionService {
         ArticleCollectionRelation articleCollectionRelation = new ArticleCollectionRelation();
         articleCollectionRelation.setArticleId(articleId)
                 .setCollectionId(collectionId);
-        collectionManager.insertArticleCollectionManager(articleCollectionRelation);
+        collectionManager.insertArticleCollectionRelation(articleCollectionRelation);
         Article article = articleManager.selectArticleById(articleId);
         //保存消息
         MessageDTO messageDTO = new MessageDTO();

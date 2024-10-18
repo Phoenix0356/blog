@@ -2,7 +2,7 @@ package com.phoenix.base.core.manager;
 
 import com.phoenix.base.cache.StringCacheHandler;
 import com.phoenix.base.core.mapper.ArticleMapper;
-import com.phoenix.base.enumeration.CachePrefix;
+import com.phoenix.common.enumeration.CachePrefix;
 import com.phoenix.base.model.entity.Article;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ public class ArticleManager {
     final StringCacheHandler stringCacheHandler;
 
     private String assembleCacheKey(String id){
-        return CachePrefix.ARTICLE +":"+id;
+        return CachePrefix.BASE_ARTICLE_CONTENT +":"+id;
     }
 
     public Article selectArticleInCache(String articleId){

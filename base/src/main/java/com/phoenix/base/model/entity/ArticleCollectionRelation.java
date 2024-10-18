@@ -18,7 +18,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class ArticleCollectionRelation {
     @TableId(value = "collection_article_list_id", type = IdType.AUTO)
-    private String collectionArticleListId;
+    private Integer collectionArticleListId;
 
     @TableField(value = "collection_id")
     private String collectionId;

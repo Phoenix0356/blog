@@ -18,7 +18,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class ArticleUpvoteRelation {
     @TableId(value = "article_upvote_id", type = IdType.AUTO)
-    private int articleUpvoteId;
+    private Integer articleUpvoteId;
 
     @TableField("article_id")
     private String articleId;

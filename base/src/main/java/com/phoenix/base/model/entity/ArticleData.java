@@ -21,7 +21,7 @@ public class ArticleData {
     private String articleDataId;
 
     @TableField("article_read_count")
-    private int articleReadCount;
+    private Integer articleReadCount;
 
     @TableField("article_id")
     private String articleId;

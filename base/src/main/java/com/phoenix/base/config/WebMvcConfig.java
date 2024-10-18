@@ -17,8 +17,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     final JwtInterceptor jwtInterceptor;
 
-    @Value("${excludePaths}")
-    String[] excludePaths;
+//    @Value("${excludePaths}")
+//    String[] excludePaths;
 
 
 
@@ -29,8 +29,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(jwtInterceptor)
-                .excludePathPatterns(excludePaths);
+        registry.addInterceptor(jwtInterceptor);
+//                .excludePathPatterns(excludePaths);
     }
     @Override
     public void addCorsMappings(CorsRegistry registry) {

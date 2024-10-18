@@ -1,10 +1,8 @@
 package com.phoenix.base.core.manager;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.phoenix.base.core.controller.ArticleController;
 import com.phoenix.base.core.mapper.ArticleCollectionMapper;
 import com.phoenix.base.core.mapper.CollectionMapper;
-import com.phoenix.base.core.service.CollectionService;
 import com.phoenix.base.model.entity.ArticleCollectionRelation;
 import com.phoenix.base.model.entity.Collection;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +46,7 @@ public class CollectionManager {
         return articleCollectionRelationList.size();
     }
 
-    public void insertArticleCollectionManager(ArticleCollectionRelation articleCollectionRelation){
+    public void insertArticleCollectionRelation(ArticleCollectionRelation articleCollectionRelation){
         int result = articleCollectionMapper.insert(articleCollectionRelation);
         if(result != 1){
             log.error("插入收藏夹ID为 {} ，文章ID为 {} 的关系对象失败", articleCollectionRelation.getArticleId()

@@ -11,5 +11,5 @@ import java.util.List;
 public interface MessageMapper extends BaseMapper<ArticleMessage> {
     List<ArticleMessageVO> getMessageList(String receiverId);
 
-    void savePulledMessage(String receiverId,String messageType);
+    void savePulledMessage(String receiverId,String dataStateType);
 }

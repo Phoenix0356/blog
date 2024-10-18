@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.phoenix.user.config.JwtConfig;
 import com.phoenix.user.config.PictureConfig;
 import com.phoenix.user.config.URLConfig;
+import com.phoenix.user.context.TokenContext;
 import com.phoenix.user.core.manager.UserManager;
 import com.phoenix.user.core.mapper.UserMapper;
 import com.phoenix.user.core.service.UserLogService;
@@ -12,7 +13,6 @@ import com.phoenix.user.enumeration.UserOperation;
 import com.phoenix.user.model.entity.User;
 import com.phoenix.user.model.vo.UserVO;
 import com.phoenix.common.util.DataUtil;
-import com.phoenix.common.util.JwtUtil;
 import com.phoenix.common.util.PictureUtil;
 import com.phoenix.common.util.SecurityUtil;
 import com.phoenix.common.constant.HttpConstant;
@@ -29,19 +29,19 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    final UserLogService userLogService;
-    final UserMapper userMapper;
-    final UserManager userManager;
+    private final UserLogService userLogService;
+    private final SessionServiceImpl sessionService;
+    private final UserMapper userMapper;
+    private final UserManager userManager;
 
-    final URLConfig urlConfig;
-    final PictureConfig pictureConfig;
-    final JwtConfig jwtConfig;
+    private final URLConfig urlConfig;
+    private final PictureConfig pictureConfig;
+    private final JwtConfig jwtConfig;
 
     @Override
     public UserVO getCurUser(String userId) {
@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new NotFoundException(RespMessageConstant.USER_NOT_FOUND_ERROR);
         }
-        return UserVO.BuildVO(user,null);
+        return UserVO.BuildVO(user);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
         if (user == null){
             throw new NotFoundException(RespMessageConstant.USER_NOT_FOUND_ERROR);
         }
-        return UserVO.BuildVO(user,null);
+        return UserVO.BuildVO(user);
     }
 
     @Override
@@ -83,11 +83,11 @@ public class UserServiceImpl implements UserService {
         userMapper.updateById(user);
         userManager.deleteCache(userId);
 
-        return UserVO.BuildVO(user,null);
+        return UserVO.BuildVO(user);
     }
 
     @Override
-    public UserVO register(UserRegisterDTO userRegisterDTO) {
+    public UserVO register(UserRegisterDTO userRegisterDTO,String sessionId) {
         BCryptPasswordEncoder passwordEncoder = SecurityUtil.getPasswordEncoder();
         String username = userRegisterDTO.getUsername();
         String password = userRegisterDTO.getPassword();
@@ -102,7 +102,6 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = new User();
-
         user.setUsername(username)
         .setPassword(passwordEncoder.encode(password))
         .setUserRole(userRegisterDTO.getRole())
@@ -110,17 +109,16 @@ public class UserServiceImpl implements UserService {
         .setRegisterTime(new Timestamp(System.currentTimeMillis()));
 
         userMapper.insert(user);
-        String token = JwtUtil.getJwt(user.getUserId(), user.getUserRole().name(),
-                jwtConfig.secret, jwtConfig.expiration);
-        userManager.setIntoCache(user.getUserId(),"",jwtConfig.expiration);
-
+        userManager.setIntoCache(user.getUserId(),"");
+        //更新session
+        sessionService.upgradeSession(user.getUserId(),sessionId);
         //记录日志
         userLogService.saveUserLog(user,UserOperation.REGISTER.name());
-        return UserVO.BuildVO(user,token);
+        return UserVO.BuildVO(user);
     }
 
     @Override
-    public UserVO login(UserLoginDTO userLoginDTO) {
+    public UserVO login(UserLoginDTO userLoginDTO,String sessionId) {
 
         BCryptPasswordEncoder passwordEncoder = SecurityUtil.getPasswordEncoder();
 
@@ -129,27 +127,24 @@ public class UserServiceImpl implements UserService {
 
         User user = userMapper.selectOne(new QueryWrapper<User>().eq("username",username));
         if (user == null){
-            throw new NotFoundException(RespMessageConstant.USER_NOT_FOUND_ERROR);
+            throw new NotFoundException(RespMessageConstant.USERNAME_OR_PASSWORD_ERROR);
         }
 
         if (!passwordEncoder.matches(password,user.getPassword())){
             throw new UsernameOrPasswordErrorException(RespMessageConstant.USERNAME_OR_PASSWORD_ERROR);
         }
 
-        String token = JwtUtil.getJwt(user.getUserId(), user.getUserRole().name(),
-                jwtConfig.secret, jwtConfig.expiration);
-        userManager.setIntoCache(user.getUserId(),"",jwtConfig.expiration);
-
+        //更新session
+        sessionService.upgradeSession(user.getUserId(),sessionId);
         //记录日志
         userLogService.saveUserLog(user,UserOperation.LOGIN.name());
 
-        return UserVO.BuildVO(user,token);
+        return UserVO.BuildVO(user);
     }
 
     @Override
-    public void logout(String jwtId, String userId, Date jwtExpirationTime) {
-        long expTime = Math.max(jwtExpirationTime.getTime()-System.currentTimeMillis(),0);
-        userManager.setIntoCache(jwtId,"",expTime/1000);
-        userManager.deleteCache(userId);
+    public void logout(String sessionId) {
+        sessionService.deleteSession(sessionId);
+        userManager.deleteCache(TokenContext.getUserId());
     }
 }

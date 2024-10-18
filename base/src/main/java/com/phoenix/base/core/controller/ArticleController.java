@@ -22,14 +22,14 @@ public class ArticleController {
 
     final ArticleService articleService;
 
-    @GetMapping("/visitor/{articleId}")
+    @GetMapping("/{articleId}")
     @AuthorizationRequired(Role.VISITOR)
     public ResultVO getArticleById(@PathVariable String articleId){
         ArticleVO articleVO = articleService.getArticleDetailById(articleId);
         return ResultVO.success(RespMessageConstant.GET_SUCCESS, articleVO);
     }
 
-    @GetMapping("/visitor/all")
+    @GetMapping("/all")
     @AuthorizationRequired(Role.VISITOR)
     public ResultVO getArticleAll(@RequestParam("sortBy") int sortStrategy){
         List<ArticleVO> articleVOList= articleService.getArticleAll(sortStrategy);
@@ -73,7 +73,7 @@ public class ArticleController {
         return ResultVO.success(RespMessageConstant.UPDATE_SUCCESS);
     }
 
-    @PutMapping("/visitor/update/{articleId}")
+    @PutMapping("/update/{articleId}")
     @AuthorizationRequired(Role.VISITOR)
     public ResultVO updateCommonArticleData(@PathVariable("articleId") String articleId){
         articleService.updateCommonArticleData(articleId);

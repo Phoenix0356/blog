@@ -14,7 +14,7 @@ import java.util.UUID;
 
 public class JwtUtil {
 
-    public static String getJwt(String userId,String role,String secret,long expiration){
+    public static String generateJwt(String userId, String role, String secret, long expiration){
         HashMap<String, Object> claims = new HashMap<>();
         claims.put(Claims.ISSUER,"phoenix");
         claims.put(JwtConstant.SUBTITLE,userId);

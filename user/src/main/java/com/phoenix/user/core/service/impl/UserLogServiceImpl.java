@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 @RequiredArgsConstructor
 public class UserLogServiceImpl implements UserLogService {
 
-    final UserLogMapper userLogMapper;
+    private final UserLogMapper userLogMapper;
     @Override
     public void getUserLogByUserId(String userId) {
     }

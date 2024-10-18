@@ -1,7 +1,9 @@
 package com.phoenix.user.core.manager;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.phoenix.common.enumeration.CachePrefix;
 import com.phoenix.user.cache.RedisCacheHandler;
+import com.phoenix.user.cache.StringCacheHandler;
 import com.phoenix.user.core.mapper.UserMapper;
 import com.phoenix.user.model.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +15,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserManager {
     final UserMapper userMapper;
-    final RedisCacheHandler redisCacheHandler;
+    final StringCacheHandler stringCacheHandler;
+
+    private String assembleCacheKey(String id){
+        return CachePrefix.USER_CONTENT +":"+id;
+    }
+
     public User select(String userId){
         return userMapper.selectById(userId);
     }
@@ -23,11 +30,12 @@ public class UserManager {
     }
 
     public User selectByUserIdInCache(String userId){
-        User user = (User) redisCacheHandler.getCache(userId,User.class);
+        String key = assembleCacheKey(userId);
+        User user = (User) stringCacheHandler.getCache(key,User.class);
         if (user == null){
             user = userMapper.selectById(userId);
             user.setPassword(null);
-            redisCacheHandler.setCache(userId,user);
+            stringCacheHandler.set(key,user);
         }
         return user;
     }
@@ -36,11 +44,13 @@ public class UserManager {
        return userMapper.selectOne(new QueryWrapper<User>().eq("username",username));
     }
 
-    public void setIntoCache(String id, String value, Long time){
-        redisCacheHandler.setCache(id,value,time);
+    public void setIntoCache(String id, String value){
+        String key = assembleCacheKey(id);
+        stringCacheHandler.set(key,value);
     }
 
     public void deleteCache(String id){
-        redisCacheHandler.deleteCache(id);
+        String key = assembleCacheKey(id);
+        stringCacheHandler.deleteCache(key);
     }
 }

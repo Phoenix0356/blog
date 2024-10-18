@@ -21,7 +21,7 @@ public class UserController {
     final UserService userService;
     final FilterServiceClient filterServiceClient;
 
-    @GetMapping("/visitor/{userId}")
+    @GetMapping("/{userId}")
     @AuthorizationRequired(Role.VISITOR)
     public ResultVO getUserById(@PathVariable("userId") String userId){
         UserVO userVO = userService.getUserByUserId(userId);
@@ -31,9 +31,7 @@ public class UserController {
     @GetMapping("/get/cur")
     @AuthorizationRequired(Role.MEMBER)
     public ResultVO getCurrentUser(){
-        UserVO userVO;
-        userVO = userService.getCurUser(TokenContext.getUserId());
-
+        UserVO userVO = userService.getCurUser(TokenContext.getUserId());
         return ResultVO.success(RespMessageConstant.GET_SUCCESS,userVO);
     }
 
@@ -47,27 +45,29 @@ public class UserController {
         UserVO userVO = userService.updateUser(userDTO,TokenContext.getUserId());
         return ResultVO.success(RespMessageConstant.UPDATE_SUCCESS,userVO);
     }
-    @PostMapping("/visitor/register")
+    @PostMapping("/register/{sessionId}")
     @AuthorizationRequired(Role.VISITOR)
-    public ResultVO register(@RequestBody UserRegisterDTO userRegisterDTO){
-        //检测是否存在敏感词
+    public ResultVO register(@RequestBody UserRegisterDTO userRegisterDTO,
+                             @PathVariable("sessionId") String sessionId){
+        //检测是否存在敏感词,存在则重新输入
         if (filterServiceClient.detectText(userRegisterDTO.getUsername())){
             return ResultVO.error(RespMessageConstant.SENSITIVE_WORD_DETECTED);
         }
-        UserVO userVO = userService.register(userRegisterDTO);
+        UserVO userVO = userService.register(userRegisterDTO,sessionId);
         return ResultVO.success(RespMessageConstant.REGISTER_SUCCESS,userVO);
     }
-    @PostMapping("/visitor/login")
+    @PostMapping("/login/{sessionId}")
     @AuthorizationRequired(Role.VISITOR)
-    public ResultVO login(@RequestBody UserLoginDTO userLoginDTO){
-        UserVO userVO = userService.login(userLoginDTO);
+    public ResultVO login(@RequestBody UserLoginDTO userLoginDTO,
+                          @PathVariable("sessionId") String sessionId){
+        UserVO userVO = userService.login(userLoginDTO,sessionId);
         return ResultVO.success(RespMessageConstant.LOGIN_SUCCESS,userVO);
     }
 
-    @PostMapping("/logout")
+    @PostMapping("/logout/{sessionId}")
     @AuthorizationRequired(Role.MEMBER)
-    public ResultVO logout(){
-        userService.logout(TokenContext.getJti(),TokenContext.getUserId(),TokenContext.getExpirationTime());
+    public ResultVO logout(@PathVariable("sessionId") String sessionId){
+        userService.logout(sessionId);
         return ResultVO.success(RespMessageConstant.LOGOUT_SUCCESS);
     }
 }
