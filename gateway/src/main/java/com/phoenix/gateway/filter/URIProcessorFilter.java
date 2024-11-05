@@ -47,7 +47,7 @@ public class URIProcessorFilter implements GlobalFilter, Ordered {
                         .mutate()
                         .uri(URI.create(uri+"/"+cookieValue))
                         .build();
-
+                log.info("接收到注册/登录/登出请求");
                 return chain.filter(exchange.mutate().request(newRequest).build());
             }
 

@@ -39,7 +39,7 @@ public class ArticleUpVoteManager{
                 .map(articleUpvoteRelation -> (Object) articleUpvoteRelation.getUpvoteUserId())
                 .toList();
         if (!upvoteUserList.isEmpty()) {
-            setCacheHandler.setList(key,upvoteUserList);
+            setCacheHandler.setFromList(key,upvoteUserList);
         }
     }
 

@@ -18,7 +18,7 @@ public class SetCacheHandler extends RedisCacheHandler{
         redisTemplate.expire(key, DEFAULT_EXPIRE_TIME, DEFAULT_TIME_UNIT);
     }
 
-    public void setList(String key, List<Object> values) {
+    public void setFromList(String key, List<Object> values) {
         redisTemplate.opsForSet().add(key, values.toArray());
     }
     public Set<Object> getSet(String key) {

@@ -44,6 +44,7 @@ public class TokenFilter implements GlobalFilter, Ordered {
                     ).retrieve()
                     .bodyToMono(String.class)
                     .flatMap(resp->{
+                        log.info("生成Token成功: {}", resp);
                         //构建新的请求
                         ServerHttpRequest newRequest = exchange
                                 .getRequest()

@@ -29,7 +29,7 @@ public class ArticleDataStateHandler {
             articleDataState |= DataStateType.UPVOTE.getIdentifier();
         }
         //如果已收藏
-        if(collectionManager.isArticleCollectedByUser(articleId,userId)){
+        if(collectionManager.isArticleCollectedByUser(userId,articleId)){
             articleDataState |= DataStateType.BOOKMARK.getIdentifier();
         }
 

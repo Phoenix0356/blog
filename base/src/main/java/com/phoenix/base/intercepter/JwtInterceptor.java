@@ -27,7 +27,6 @@ public class JwtInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
-        System.out.println(token);
         if (!DataUtil.isEmptyData(token) && token.startsWith(Authorization.PREFIX.getValue())) {
             token = token.substring(7);
             try {

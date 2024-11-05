@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 
@@ -49,7 +50,6 @@ public class ArticleServiceImpl implements ArticleService{
     @Override
     public ArticleVO getArticleDetailById(String articleId) {
         if (DataUtil.isEmptyData(articleId)) throw new InvalidateArgumentException();
-
         Article article;
         ArticleData articleData;
         int upvoteCount,bookmarkCount;
@@ -59,7 +59,7 @@ public class ArticleServiceImpl implements ArticleService{
         try{
             //获取文章静态内容缓存
             article = articleManager.selectArticleInCache(articleId);
-            //获取文章动态数据，并更新阅读量
+            //获取文章动态数据
             articleData = articleDataManager.selectByArticleId(articleId);
             //获取数据库和缓存中的点赞数
             upvoteCount = articleUpVoteManager.getArticleUpvoteCount(articleId);
@@ -98,7 +98,6 @@ public class ArticleServiceImpl implements ArticleService{
             default:
                 break;
         }
-
         return articleVOList;
     }
 
@@ -151,7 +150,9 @@ public class ArticleServiceImpl implements ArticleService{
             reentrantLock.unlock();
         }
     }
-
+    /*
+    * 更新点赞和收藏
+    * */
     @Override
     public void updateAuthorizedArticleData(ArticleDTO articleDTO) {
         ReentrantLock reentrantLock = articleLockPool.getIfAbsent(articleDTO.getArticleId(), ReentrantLock.class);
@@ -186,6 +187,9 @@ public class ArticleServiceImpl implements ArticleService{
         }
     }
 
+    /*
+    * 更新阅读量
+    * */
     @Override
     public void updateCommonArticleData(String articleId) {
         ReentrantLock reentrantLock = articleLockPool.getIfAbsent(articleId, ReentrantLock.class);

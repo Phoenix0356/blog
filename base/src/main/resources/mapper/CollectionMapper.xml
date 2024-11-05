@@ -16,7 +16,7 @@
                                WHERE collection_id = #{collectionId} AND article_id = #{articleId})
     </select>
 
-    <insert id="insertArticleIntoCollection" parameterType="map">
+    <insert id="insertArticleIntoCollection" parameterType="String">
         INSERT INTO collection_article_list(collection_article_list_id, collection_id, article_id)
         VALUES(#{collectionArticleListId}, #{collectionId}, #{articleId})
     </insert>
